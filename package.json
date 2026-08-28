@@ -1,13 +1,12 @@
 {
-  "name": "hf-incident-party-website",
+  "name": "hf-incident-party",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "bun src/index.html",
     "build": "bun build ./src/index.html --production --outdir=dist",
     "preview": "bun dist/index.html",
-    "lint": "eslint src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "lucide-react": "^1.35.0",
@@ -17,9 +16,7 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "typescript": "^5",
-    "typescript-eslint": "^8"
+    "@typescript/native-preview": "^7.0.0-dev.20260707.2"
   },
   "packageManager": "bun@1.4.0"
 }
