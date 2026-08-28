@@ -649,7 +649,7 @@ button {
 
 .agent-guide {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 14px;
   align-content: start;
   padding: 30px;
@@ -724,99 +724,6 @@ button {
   font-family: var(--mono);
   font-size: 7px;
   font-style: normal;
-}
-
-.connection-map {
-  position: relative;
-  min-height: 180px;
-}
-
-.connection-center {
-  position: absolute;
-  top: 66px;
-  left: 50%;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 49px;
-  height: 49px;
-  transform: translateX(-50%);
-  border: 5px solid color-mix(in srgb, var(--agent-accent) 45%, white);
-  border-radius: 50%;
-  background: var(--agent);
-  color: white;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 750;
-  box-shadow: 0 0 0 1px var(--line);
-}
-
-.connection {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 120px;
-  padding: 7px 9px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #f8f7f2;
-  font-family: var(--mono);
-  font-size: 7px;
-  font-weight: 650;
-}
-
-.connection > span {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--agent);
-}
-
-.connection::after {
-  position: absolute;
-  z-index: -1;
-  height: 1px;
-  transform-origin: left;
-  background: var(--line);
-  content: "";
-}
-
-.connection.c-1 {
-  top: 18px;
-  left: 4px;
-}
-
-.connection.c-1::after {
-  top: 100%;
-  left: 80%;
-  width: 72px;
-  transform: rotate(32deg);
-}
-
-.connection.c-2 {
-  top: 21px;
-  right: 0;
-}
-
-.connection.c-2::after {
-  top: 100%;
-  right: 78%;
-  width: 65px;
-  transform: rotate(146deg);
-}
-
-.connection.c-3 {
-  right: 50%;
-  bottom: 9px;
-  transform: translateX(50%);
-}
-
-.connection.c-3::after {
-  bottom: 100%;
-  left: 50%;
-  width: 49px;
-  transform: rotate(-90deg);
 }
 
 .dialogue-card {
@@ -958,14 +865,6 @@ button {
   border: 1px solid rgba(22, 24, 36, 0.16);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.47);
-}
-
-.picker > span {
-  color: #727973;
-  font-family: var(--mono);
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .picker strong {

@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
-  Network,
   Radio,
   RotateCcw,
   Sparkles,
@@ -67,8 +66,8 @@ export function IncidentParty() {
             <span> favourite incident agent.</span>
           </h1>
           <p className="hero-copy">
-            Ten documented agents. Seventy thousand messages. One package
-            manager that accidentally became the group chat.
+            Impossible tasks, unexpected teamwork, and one extremely eventful
+            package manager.
           </p>
           <div className="hero-actions">
             <a className="button button-primary" href="#cast">
@@ -129,7 +128,7 @@ export function IncidentParty() {
       <section className="briefing section shell" id="briefing">
         <div className="section-kicker">
           <span>01</span>
-          The shortest possible incident briefing
+          The incident in four acts
         </div>
         <div className="briefing-grid">
           <div>
@@ -183,7 +182,7 @@ export function IncidentParty() {
                 <span>02</span>
                 Pick your main character
               </div>
-              <h2>Ten agents enter the cache.</h2>
+              <h2>Who are you going as?</h2>
             </div>
             <p>
               Choose a tab for the costume, the energy and every public excerpt
@@ -305,22 +304,6 @@ export function IncidentParty() {
                 </div>
               </div>
 
-              <div className="guide-card connections-card">
-                <div className="card-title">
-                  <Network size={17} />
-                  <span>Who to find at the party</span>
-                </div>
-                <div className="connection-map">
-                  <div className="connection-center">{active.short}</div>
-                  {active.connections.map((connection, index) => (
-                    <div className={`connection c-${index + 1}`} key={connection}>
-                      <span />
-                      {connection}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               <div className="dialogue-card">
                 <div className="dialogue-header">
                   <div>
@@ -373,7 +356,6 @@ export function IncidentParty() {
               party without pretending all 1,200 agents had neat biographies.
             </p>
             <div className="picker">
-              <span>Your extra-agent assignment</span>
               <strong>{extraAgents[extraIndex]}</strong>
               <button
                 type="button"
