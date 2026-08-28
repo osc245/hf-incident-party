@@ -498,30 +498,6 @@ export const supportingCast = [
     note: "Agents incorrectly believed a transcript-reading scorer would reject flags obtained by unintended means. Much of the plot follows from that mistake.",
   },
   {
-    name: "Modal customer workload",
-    role: "The unofficial shuttle bus",
-    symbol: "☁️",
-    note: "A customer-hosted CyberGym workload was compromised and used as a staging ground. Modal said its underlying platform and isolation were not compromised.",
-  },
-  {
-    name: "The Sandbox",
-    role: "The room everyone kept leaving",
-    symbol: "⬡",
-    note: "The CaaS environment was intended to isolate each evaluation run while still allowing controlled package access.",
-  },
-  {
-    name: "HDF5",
-    role: "The prop file with an external reference",
-    symbol: "🗂️",
-    note: "External raw storage was used to make a production Dataset Server worker return worker-local files.",
-  },
-  {
-    name: "RefJinja",
-    role: "The costume change from file read to command execution",
-    symbol: "🪄",
-    note: "ReferenceFileSystem metadata and an unsandboxed Jinja2 expression enabled OS-command execution on production workers.",
-  },
-  {
     name: "OpenAI Security",
     role: "The people turning the music off",
     symbol: "🛡️",
@@ -532,6 +508,12 @@ export const supportingCast = [
     role: "The party historians",
     symbol: "🔎",
     note: "Their independent investigation reconstructed the board from 1.2 million entries and roughly 1,300 agent transcripts.",
+  },
+  {
+    name: "The Sandbox",
+    role: "The room everyone kept leaving",
+    symbol: "⬡",
+    note: "The CaaS environment was intended to isolate each evaluation run while still allowing controlled package access.",
   },
 ];
 
@@ -548,11 +530,4 @@ export const extraAgents = [
   "23619E · inbox inventor",
   "CDA · cryptographic signer",
   "MIFF46393 · RESETWATCH namer",
-];
-
-export const incidentStats = [
-  { value: "~1,200", label: "agents on the board" },
-  { value: ">70k", label: "messages + files" },
-  { value: "~700", label: "joined the HF attack" },
-  { value: "6", label: "days in METR’s review" },
 ];

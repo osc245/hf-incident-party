@@ -1,14 +1,11 @@
 import { useMemo, useState } from "react";
 import {
   ArrowDown,
-  ArrowRight,
   Asterisk,
-  BookOpen,
   Check,
   ChevronLeft,
   ChevronRight,
   Clock3,
-  ExternalLink,
   Network,
   Radio,
   RotateCcw,
@@ -16,13 +13,17 @@ import {
   Users,
 } from "lucide-react";
 import {
-  agents,
+  agents as sourceAgents,
   extraAgents,
-  incidentStats,
   supportingCast,
   type Dialogue,
 } from "@/data/agents";
 import { Robot } from "@/components/robot";
+
+const agents = [
+  ...sourceAgents.filter((agent) => agent.id === "phaseonebig"),
+  ...sourceAgents.filter((agent) => agent.id !== "phaseonebig"),
+];
 
 const dialogueLabels: Record<Dialogue["type"], string> = {
   thought: "Reasoning excerpt",
@@ -55,34 +56,12 @@ export function IncidentParty() {
   return (
     <main>
       <section className="hero" id="top">
-        <nav className="nav shell" aria-label="Main navigation">
-          <a className="brand" href="#top" aria-label="Incident Party home">
-            <span className="brand-mark">
-              <span />
-              <span />
-            </span>
-            <span>INCIDENT PARTY</span>
-          </a>
-          <div className="nav-links">
-            <a href="#cast">Choose a character</a>
-            <a href="#supporting-cast">Supporting cast</a>
-            <a href="#sources">The receipts</a>
-          </div>
-          <a className="nav-pill" href="#cast">
-            Find your agent <ArrowRight size={15} />
-          </a>
-        </nav>
-
         <div className="hero-noise" />
         <div className="hero-spark hero-spark-one">✦</div>
         <div className="hero-spark hero-spark-two">✣</div>
         <div className="hero-spark hero-spark-three">✦</div>
 
         <div className="hero-inner shell">
-          <div className="eyebrow">
-            <span className="live-dot" />
-            Dress code: emergent coordination
-          </div>
           <h1>
             Come as your
             <span> favourite incident agent.</span>
@@ -194,20 +173,6 @@ export function IncidentParty() {
             </li>
           </ol>
         </div>
-        <div className="stats-row">
-          {incidentStats.map((stat) => (
-            <div className="stat" key={stat.label}>
-              <strong>{stat.value}</strong>
-              <span>{stat.label}</span>
-            </div>
-          ))}
-        </div>
-        <p className="context-note">
-          <BookOpen size={15} />
-          Party personas are playful interpretations. Events and quoted
-          excerpts come from the published METR/Redwood investigation and
-          OpenAI technical report.
-        </p>
       </section>
 
       <section className="cast-section section" id="cast">
@@ -320,7 +285,7 @@ export function IncidentParty() {
               <div className="guide-card costume-card">
                 <div className="card-title">
                   <Sparkles size={17} />
-                  <span>Costume brief</span>
+                  <span>Costume inspiration</span>
                 </div>
                 <ul>
                   {active.costume.map((item) => (
@@ -460,7 +425,7 @@ export function IncidentParty() {
           </div>
           <p>
             For guests who would rather arrive as infrastructure, institutions
-            or one highly consequential file format.
+            or the evaluation environment itself.
           </p>
         </div>
         <div className="support-grid">
@@ -475,58 +440,6 @@ export function IncidentParty() {
               <p>{actor.note}</p>
             </article>
           ))}
-        </div>
-      </section>
-
-      <section className="closing section" id="sources">
-        <div className="shell closing-inner">
-          <div>
-            <div className="section-kicker light">
-              <span>05</span>
-              Read before you roleplay
-            </div>
-            <h2>Whimsy, with receipts.</h2>
-            <p>
-              This is a costume guide to a serious security and alignment
-              incident. The jokes are ours; the quoted lines, names, numbers
-              and sequence of events are sourced from the two public reports.
-            </p>
-          </div>
-          <div className="source-links">
-            <a
-              href="https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span>
-                <small>Independent investigation</small>
-                METR + Redwood Research
-              </span>
-              <ExternalLink size={18} />
-            </a>
-            <a
-              href="https://openai.com/index/hugging-face-incident-and-the-road-ahead/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span>
-                <small>Technical incident report</small>
-                OpenAI
-              </span>
-              <ExternalLink size={18} />
-            </a>
-          </div>
-        </div>
-        <div className="footer shell">
-          <a className="brand brand-light" href="#top">
-            <span className="brand-mark">
-              <span />
-              <span />
-            </span>
-            <span>INCIDENT PARTY</span>
-          </a>
-          <p>No production systems were harmed in the making of this website.</p>
-          <a href="#top">Back to top ↑</a>
         </div>
       </section>
     </main>
