@@ -1,5 +1,3 @@
-"use client";
-
 type RobotProps = {
   color: string;
   accent: string;
