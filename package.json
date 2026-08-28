@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "bun src/index.html",
-    "build": "bun build ./src/index.html --production --outdir=dist",
+    "build": "bun run build.ts",
     "preview": "bun dist/index.html",
     "typecheck": "tsgo --noEmit"
   },
@@ -16,7 +16,9 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript/native-preview": "^7.0.0-dev.20260707.2"
+    "@typescript/native-preview": "^7.0.0-dev.20260707.2",
+    "bun-plugin-tailwind": "^0.1.2",
+    "tailwindcss": "^4.3.3"
   },
   "packageManager": "bun@1.4.0"
 }

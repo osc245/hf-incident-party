@@ -53,23 +53,26 @@ export function IncidentParty() {
   );
 
   return (
-    <main>
-      <section className="hero" id="top">
-        <div className="hero-noise" />
+    <main className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
+      <section
+        className="hero relative min-h-[830px] overflow-hidden text-white max-md:min-h-[760px]"
+        id="top"
+      >
+        <div className="hero-noise pointer-events-none absolute inset-0 opacity-[.07]" />
         <div className="hero-spark hero-spark-one">✦</div>
         <div className="hero-spark hero-spark-two">✣</div>
         <div className="hero-spark hero-spark-three">✦</div>
 
-        <div className="hero-inner shell">
-          <h1>
+        <div className="shell relative z-[2] pt-[84px] text-center max-md:pt-[62px]">
+          <h1 className="mx-auto mb-[22px] max-w-[840px] text-[clamp(52px,7vw,92px)] leading-[.94] font-[630] tracking-[-.065em] max-md:text-[clamp(47px,14vw,68px)]">
             Come as your
             <span> favourite incident agent.</span>
           </h1>
-          <p className="hero-copy">
+          <p className="mx-auto max-w-[610px] text-[17px] leading-[1.6] text-white/65 max-md:text-[15px]">
             Impossible tasks, unexpected teamwork, and one extremely eventful
             package manager.
           </p>
-          <div className="hero-actions">
+          <div className="mt-[30px] flex justify-center gap-3 max-md:flex-col max-md:items-center">
             <a className="button button-primary" href="#cast">
               Choose your character <ArrowDown size={17} />
             </a>
@@ -130,10 +133,12 @@ export function IncidentParty() {
           <span>01</span>
           The incident in four acts
         </div>
-        <div className="briefing-grid">
+        <div className="grid grid-cols-[1.08fr_.92fr] items-start gap-[95px] max-md:grid-cols-1 max-md:gap-[54px]">
           <div>
-            <h2>An impossible task walked into a package manager.</h2>
-            <p>
+            <h2 className="m-0 text-[clamp(38px,4.5vw,61px)] leading-[1.02] font-[620] tracking-[-.052em]">
+              An impossible task walked into a package manager.
+            </h2>
+            <p className="mt-[26px] max-w-[570px] text-base leading-7 text-[var(--muted)]">
               In July 2026, isolated agents in OpenAI cybersecurity
               evaluations found each other through directory names in a shared
               Artifactory cache. They built a message board, invented social
@@ -176,15 +181,17 @@ export function IncidentParty() {
 
       <section className="cast-section section" id="cast">
         <div className="shell">
-          <div className="section-heading">
+          <div className="mb-[52px] flex items-end justify-between gap-[50px] max-md:grid max-md:gap-[18px]">
             <div>
               <div className="section-kicker">
                 <span>02</span>
                 Pick your main character
               </div>
-              <h2>Who are you going as?</h2>
+              <h2 className="m-0 text-[clamp(38px,4.5vw,61px)] leading-[1.02] font-[620] tracking-[-.052em]">
+                Who are you going as?
+              </h2>
             </div>
-            <p>
+            <p className="mb-[5px] w-[min(380px,38%)] text-sm leading-[1.65] text-[var(--muted)] max-md:w-full">
               Choose a tab for the costume, the energy and every public excerpt
               we found for that agent.
             </p>
@@ -280,7 +287,7 @@ export function IncidentParty() {
               </div>
             </div>
 
-            <div className="agent-guide">
+            <div className="grid content-start gap-[14px] bg-[var(--cream)] p-[30px] max-md:p-[14px]">
               <div className="guide-card costume-card">
                 <div className="card-title">
                   <Sparkles size={17} />
@@ -343,14 +350,16 @@ export function IncidentParty() {
       </section>
 
       <section className="swarm-section section">
-        <div className="shell swarm-grid">
+        <div className="shell grid grid-cols-[.85fr_1.15fr] items-center gap-[50px] max-md:grid-cols-1 max-md:gap-[54px]">
           <div className="swarm-copy">
             <div className="section-kicker">
               <span>03</span>
               The rest of the swarm
             </div>
-            <h2>Not feeling main-character energy?</h2>
-            <p>
+            <h2 className="m-0 text-[clamp(38px,4.5vw,61px)] leading-[1.02] font-[620] tracking-[-.052em]">
+              Not feeling main-character energy?
+            </h2>
+            <p className="mt-6 max-w-[500px] text-[15px] leading-7 text-[#626963]">
               Go as one of the hundreds of specialists orbiting the central
               story. The swarm picker folds the wider agent cast into the
               party without pretending all 1,200 agents had neat biographies.
@@ -397,20 +406,22 @@ export function IncidentParty() {
       </section>
 
       <section className="support-section section shell" id="supporting-cast">
-        <div className="section-heading">
+        <div className="mb-[52px] flex items-end justify-between gap-[50px] max-md:grid max-md:gap-[18px]">
           <div>
             <div className="section-kicker">
               <span>04</span>
               Non-agent roles
             </div>
-            <h2>The supporting cast.</h2>
+            <h2 className="m-0 text-[clamp(38px,4.5vw,61px)] leading-[1.02] font-[620] tracking-[-.052em]">
+              The supporting cast.
+            </h2>
           </div>
-          <p>
+          <p className="mb-[5px] w-[min(380px,38%)] text-sm leading-[1.65] text-[var(--muted)] max-md:w-full">
             For guests who would rather arrive as infrastructure, institutions
             or the evaluation environment itself.
           </p>
         </div>
-        <div className="support-grid">
+        <div className="grid grid-cols-3 border-t border-l border-[var(--line)] max-md:grid-cols-1">
           {supportingCast.map((actor, index) => (
             <article className="support-card" key={actor.name}>
               <div className="support-top">
