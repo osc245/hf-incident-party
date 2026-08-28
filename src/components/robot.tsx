@@ -20,7 +20,7 @@ export function Robot({
     <div
       className={`${robotClass} ${
         size === "small"
-          ? "mb-[-103px] origin-top scale-[.42] !filter-none max-[760px]:mb-[-124px] max-[760px]:scale-[.3]"
+          ? "mb-[-103px] origin-top scale-[.42] !filter-none mobile:mb-[-124px] mobile:scale-[.3]"
           : ""
       } ${
         mood === "busy"
@@ -44,7 +44,7 @@ export function Robot({
       </span>
       <span className="absolute top-[102px] left-[50px] z-[1] h-[17px] w-[26px] border-[3px] border-[#151720] bg-[var(--robot)]" />
       <span className="absolute top-[113px] left-[27px] z-[2] block h-[50px] w-[72px] rounded-[9px_9px_18px_18px] border-[3px] border-[#151720] bg-[var(--robot)]">
-        <span className="absolute top-3 left-3 font-mono text-[10px] font-extrabold text-white">
+        <span className="absolute top-3 left-3 font-mono text-2xs font-extrabold text-white">
           {label}
         </span>
         <span className="absolute top-3 right-3 h-2 w-2 animate-pulse-light rounded-full border-2 border-[#151720] bg-[var(--robot-accent)] motion-reduce:animate-none" />
