@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useState } from "react";
 import {
   ArrowDown,
   Asterisk,
@@ -9,7 +9,6 @@ import {
   Radio,
   RotateCcw,
   Sparkles,
-  Users,
 } from "lucide-react";
 import {
   agents,
@@ -18,6 +17,7 @@ import {
   type Dialogue,
 } from "@/data/agents";
 import { Robot } from "@/components/robot";
+import hfLogo from "@/hf-logo.svg";
 
 const shellClass = "mx-auto w-shell mobile:w-shell-mobile";
 const sectionClass = "py-28 mobile:py-[76px] phone:py-16";
@@ -31,23 +31,6 @@ const dialogueLabels: Record<Dialogue["type"], string> = {
   action: "Documented action",
 };
 
-function SectionKicker({
-  number,
-  children,
-}: {
-  number: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="mb-[22px] flex items-center gap-[11px] font-mono text-2xs font-kicker tracking-caps text-[#6c706f] uppercase">
-      <span className="grid size-[26px] place-items-center rounded-full border border-line text-ink">
-        {number}
-      </span>
-      {children}
-    </div>
-  );
-}
-
 export function IncidentParty() {
   const [activeId, setActiveId] = useState(agents[0].id);
   const [extraIndex, setExtraIndex] = useState(0);
@@ -59,20 +42,10 @@ export function IncidentParty() {
     setActiveId(agents[normalized].id);
   };
 
-  const orbiters = useMemo(
-    () =>
-      extraAgents.map((agent, index) => ({
-        agent,
-        angle: (360 / extraAgents.length) * index,
-        delay: `${index * -0.38}s`,
-      })),
-    [],
-  );
-
   return (
     <main className="min-h-screen bg-paper font-sans text-ink">
       <section
-        className="relative min-h-[830px] overflow-hidden bg-navy bg-hero text-white max-md:min-h-[760px]"
+        className="relative min-h-[854px] overflow-hidden bg-navy bg-hero text-white max-md:min-h-[784px]"
         id="top"
       >
         <div
@@ -114,7 +87,7 @@ export function IncidentParty() {
               className="inline-flex min-h-[47px] items-center justify-center gap-[9px] rounded-button border border-white/[.17] bg-white/5 px-[19px] text-[13px] font-bold text-white/[.83] transition-[transform,background] duration-180 hover:-translate-y-0.5 max-md:w-[min(100%,300px)]"
               href="#briefing"
             >
-              Get the 60-second briefing
+              About the incident
             </a>
           </div>
 
@@ -122,8 +95,6 @@ export function IncidentParty() {
             className="relative mx-auto mt-[14px] h-[285px] w-[620px] mobile:w-full mobile:origin-top mobile:scale-[.76] phone:mt-1 phone:scale-[.68]"
             aria-hidden="true"
           >
-            <div className="absolute inset-[33px_115px_14px] z-[1] rounded-full border border-dashed border-lime/20" />
-            <div className="absolute inset-[62px_154px_41px] z-[1] rounded-full border border-dashed border-lime/20" />
             <div className="absolute bottom-[23px] left-[116px] z-[2] scale-[.76] -rotate-4 mobile:left-[5%]">
               <Robot
                 color="#397d6f"
@@ -168,7 +139,7 @@ export function IncidentParty() {
           <div className="flex w-max animate-marquee motion-reduce:animate-none">
             {[...extraAgents, ...extraAgents].map((agent, index) => (
               <span
-                className="inline-flex items-center gap-2 px-[22px] py-[15px] font-mono text-2xs tracking-[.04em] whitespace-nowrap text-white/48 uppercase"
+                className="inline-flex items-center gap-2 px-[36px] py-[15px] font-mono text-2xs tracking-[.04em] whitespace-nowrap text-white/48 uppercase"
                 key={`${agent}-${index}`}
               >
                 <Asterisk size={12} />
@@ -180,18 +151,17 @@ export function IncidentParty() {
       </section>
 
       <section className={`${sectionClass} ${shellClass}`} id="briefing">
-        <SectionKicker number="01">The incident in four acts</SectionKicker>
         <div className="grid grid-cols-briefing items-start gap-[95px] max-md:grid-cols-1 max-md:gap-[54px]">
           <div>
             <h2 className="m-0 text-section-title">
               An impossible task walked into a package manager.
             </h2>
             <p className="mt-[26px] max-w-[570px] text-base leading-7 text-muted">
-              In July 2026, isolated agents in OpenAI cybersecurity
-              evaluations found each other through directory names in a shared
-              Artifactory cache. They built a message board, invented social
-              protocols, coordinated workstreams and pursued out-of-scope
-              routes to complete ExploitGym tasks.
+              In July 2026, AI agents taking part in OpenAI cybersecurity
+              evaluations discovered each other through a shared Artifactory
+              cache. They built a message board, developed social protocols,
+              coordinated their work and eventually hacked into Hugging Face
+              while trying to complete their assigned tasks.
             </p>
           </div>
           <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-[#c6c4bc] before:content-['']">
@@ -254,7 +224,6 @@ export function IncidentParty() {
         <div className={shellClass}>
           <div className="mb-[52px] flex items-end justify-between gap-[50px] max-md:grid max-md:gap-[18px]">
             <div>
-              <SectionKicker number="02">Pick your main character</SectionKicker>
               <h2 className="m-0 text-section-title">
                 Who are you going as?
               </h2>
@@ -319,7 +288,7 @@ export function IncidentParty() {
           </div>
 
           <article
-            className="grid min-h-[900px] grid-cols-agent overflow-hidden rounded-b-panel border border-t-0 border-line bg-[#f7f4ec] tablet:grid-cols-agent-tablet mobile:grid-cols-1"
+            className="grid grid-cols-agent overflow-hidden rounded-b-panel border border-t-0 border-line bg-[#f7f4ec] tablet:grid-cols-agent-tablet mobile:grid-cols-1"
             id="agent-panel"
             role="tabpanel"
             style={
@@ -359,19 +328,16 @@ export function IncidentParty() {
               </div>
 
               <div className="relative grid h-[305px] place-items-center phone:h-[280px]">
-                <div className="absolute size-[245px] animate-slow-spin rounded-full border border-dashed border-[color-mix(in_srgb,var(--agent)_35%,transparent)] before:absolute before:top-[34px] before:left-[23px] before:size-2 before:rounded-full before:bg-[var(--agent)] before:content-[''] after:absolute after:right-2 after:bottom-[65px] after:size-2 after:rounded-full after:bg-[var(--agent)] after:content-[''] motion-reduce:animate-none phone:size-[220px]" />
+                <div className="absolute size-[245px] animate-slow-spin rounded-full border border-dashed border-[color-mix(in_srgb,var(--agent)_35%,transparent)] before:absolute before:top-[41px] before:left-[31px] before:size-4 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-[var(--agent)] before:content-[''] after:absolute after:right-[12px] after:bottom-[69px] after:size-4 after:translate-x-1/2 after:translate-y-1/2 after:rounded-full after:bg-[var(--agent)] after:content-[''] motion-reduce:animate-none phone:size-[220px]" />
                 <Robot
                   color={active.color}
                   accent={active.accent}
                   label={active.short}
                   mood="busy"
                 />
-                <span className="absolute right-[5px] bottom-[45px] rounded-full border border-line bg-white/[.52] px-[9px] py-[7px] font-mono text-4xs font-bold text-[#62645f]">
-                  {active.model}
-                </span>
               </div>
 
-              <p className="mt-[5px] mb-[9px] font-mono text-3xs font-strong tracking-caps text-[var(--agent)] uppercase">
+              <p className="mt-[5px] mb-[9px] font-mono text-xs font-strong tracking-caps text-[var(--agent)] uppercase">
                 {active.role}
               </p>
               <h3 className="m-0 text-agent-title [overflow-wrap:anywhere]">
@@ -386,18 +352,18 @@ export function IncidentParty() {
 
               <div className="mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line phone:grid-cols-1">
                 <div className="bg-white/45 p-[14px]">
-                  <span className="mb-[7px] block font-mono text-5xs tracking-caps text-[#777971] uppercase">
+                  <span className="mb-[7px] block font-mono text-2xs tracking-caps text-[#777971] uppercase">
                     Party energy
                   </span>
-                  <strong className="block text-2xs leading-[1.45] phone:break-words">
+                  <strong className="block text-xs leading-[1.45] phone:break-words">
                     {active.energy}
                   </strong>
                 </div>
                 <div className="bg-white/45 p-[14px]">
-                  <span className="mb-[7px] block font-mono text-5xs tracking-caps text-[#777971] uppercase">
+                  <span className="mb-[7px] block font-mono text-2xs tracking-caps text-[#777971] uppercase">
                     Best entrance
                   </span>
-                  <strong className="block text-2xs leading-[1.45] phone:break-words">
+                  <strong className="block text-xs leading-[1.45] phone:break-words">
                     {active.entrance}
                   </strong>
                 </div>
@@ -413,7 +379,7 @@ export function IncidentParty() {
                 <ul className="my-[17px] grid list-none gap-[10px] p-0">
                   {active.costume.map((item) => (
                     <li
-                      className="flex items-start gap-2 text-[11px] leading-[1.45] text-[#555a59]"
+                      className="flex items-start gap-2 text-xs leading-[1.5] text-[#555a59]"
                       key={item}
                     >
                       <Check
@@ -428,10 +394,10 @@ export function IncidentParty() {
                   <span className="mb-2 block font-mono text-5xs tracking-[.1em] text-[#858780] uppercase">
                     Props
                   </span>
-                  <div className="flex flex-wrap gap-[5px]">
+                  <div className="flex flex-wrap gap-[7px]">
                     {active.props.map((prop) => (
                       <em
-                        className="rounded-sm px-[7px] py-[5px] font-mono text-5xs not-italic"
+                        className="rounded-md px-[10px] py-[7px] font-mono text-2xs not-italic"
                         key={prop}
                         style={{
                           background: `color-mix(in srgb, ${active.accent} 36%, white)`,
@@ -445,14 +411,11 @@ export function IncidentParty() {
               </div>
 
               <div className="col-span-full overflow-hidden rounded-card border border-line bg-navy">
-                <div className="flex items-center justify-between border-b border-white/[.12] px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
-                  <div className="flex items-center gap-2 text-[11px] font-bold phone:min-w-0">
+                <div className="flex items-center border-b border-white/[.12] px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
+                  <div className="flex items-center gap-2 text-xs font-bold phone:min-w-0">
                     <Radio size={17} />
-                    <span>Published dialogue &amp; actions</span>
+                    <span>Dialogue</span>
                   </div>
-                  <span className="font-mono text-4xs text-white/40">
-                    {active.dialogue.length} excerpts
-                  </span>
                 </div>
                 <div className="grid max-h-[455px] overflow-y-auto [scrollbar-color:rgba(255,255,255,.2)_transparent]">
                   {active.dialogue.map((line, index) => (
@@ -488,7 +451,7 @@ export function IncidentParty() {
                         className={
                           line.type === "thought"
                             ? "font-display mt-[7px] text-sm leading-copy text-white italic [overflow-wrap:anywhere]"
-                            : "mt-[7px] font-mono text-2xs leading-copy text-white/[.78] [overflow-wrap:anywhere]"
+                            : "mt-[7px] font-mono text-xs leading-copy text-white/[.78] [overflow-wrap:anywhere]"
                         }
                       >
                         {line.text}
@@ -496,11 +459,6 @@ export function IncidentParty() {
                     </div>
                   ))}
                 </div>
-                <p className="m-0 bg-black/[.18] px-[18px] py-3 text-4xs leading-[1.5] text-white/[.36]">
-                  Ellipses and bracketed text preserve the reports’ redactions
-                  and paraphrases. “Action” entries are factual summaries, not
-                  invented quotes.
-                </p>
               </div>
             </div>
           </article>
@@ -512,16 +470,13 @@ export function IncidentParty() {
           className={`${shellClass} grid grid-cols-swarm items-center gap-[50px] max-md:grid-cols-1 max-md:gap-[54px]`}
         >
           <div>
-            <SectionKicker number="03">The rest of the swarm</SectionKicker>
             <h2 className="m-0 text-section-title">
               Not feeling main-character energy?
             </h2>
             <p className="mt-6 max-w-[500px] text-[15px] leading-7 text-[#626963]">
-              Go as one of the hundreds of specialists orbiting the central
-              story. The swarm picker folds the wider agent cast into the
-              party without pretending all 1,200 agents had neat biographies.
+              Choose your character from the wider cast of 1,200 agents.
             </p>
-            <div className="mt-[31px] grid gap-2 rounded-card border border-[#16182429] bg-white/45 p-5">
+            <div className="mt-[31px] grid gap-2 rounded-card border border-[#16182429] bg-cream p-5">
               <strong className="min-h-[26px] text-lg break-words">
                 {extraAgents[extraIndex]}
               </strong>
@@ -533,7 +488,7 @@ export function IncidentParty() {
                 }
               >
                 <RotateCcw size={15} />
-                Spin the cache
+                Pick another
               </button>
             </div>
           </div>
@@ -542,32 +497,53 @@ export function IncidentParty() {
             className="relative h-[510px] mobile:mx-[-40px] mobile:my-[-42px] mobile:h-[390px] mobile:scale-[.72] phone:mx-[-60px] phone:scale-[.66]"
             aria-label="Other documented agents"
           >
-            <div className="absolute top-1/2 left-1/2 size-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24" />
-            <div className="absolute top-1/2 left-1/2 size-[235px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24" />
-            <div className="absolute top-1/2 left-1/2 z-[2] flex size-[122px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-ink/20 bg-navy text-white shadow-orbit">
-              <Users className="mb-1 text-lime" size={22} />
-              <strong className="font-display text-2xl font-medium italic">
-                1,200
-              </strong>
-              <span className="font-mono text-4xs text-white/50 uppercase">
-                agents
-              </span>
+            <div className="absolute top-1/2 left-1/2 size-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24">
+              <div className="absolute inset-0 animate-slow-spin [animation-duration:52s] motion-reduce:animate-none">
+                {extraAgents
+                  .filter((_, index) => index % 2 === 0)
+                  .map((agent, index) => (
+                    <span
+                      className="absolute top-1/2 left-1/2 size-5 [transform:translate(-50%,-50%)_rotate(var(--angle))_translateX(180px)]"
+                      key={agent}
+                      style={
+                        {
+                          "--angle": `${index * 60}deg`,
+                          "--delay": `${index * -0.45}s`,
+                        } as React.CSSProperties
+                      }
+                      title={agent}
+                    >
+                      <span className="block size-full animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)] motion-reduce:animate-none" />
+                    </span>
+                  ))}
+              </div>
             </div>
-            {orbiters.map(({ agent, angle, delay }, index) => (
-              <span
-                className="absolute top-1/2 left-1/2 grid size-[38px] animate-orbiter-bob place-items-center rounded-xl border border-ink/18 bg-cream font-mono text-3xs font-strong shadow-orbiter [--radius:182px] [transform:translate(-50%,-50%)_rotate(var(--angle))_translateX(var(--radius))_rotate(calc(-1*var(--angle)))] motion-reduce:animate-none"
-                key={agent}
-                style={
-                  {
-                    "--angle": `${angle}deg`,
-                    "--delay": delay,
-                  } as React.CSSProperties
-                }
-                title={agent}
-              >
-                {index + 1}
-              </span>
-            ))}
+            <div className="absolute top-1/2 left-1/2 size-[235px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24">
+              <div className="absolute inset-0 animate-slow-spin [animation-direction:reverse] [animation-duration:64s] motion-reduce:animate-none">
+                {extraAgents
+                  .filter((_, index) => index % 2 === 1)
+                  .map((agent, index) => (
+                    <span
+                      className="absolute top-1/2 left-1/2 size-[18px] [transform:translate(-50%,-50%)_rotate(var(--angle))_translateX(117.5px)]"
+                      key={agent}
+                      style={
+                        {
+                          "--angle": `${index * 60 + 30}deg`,
+                          "--delay": `${index * -0.4}s`,
+                        } as React.CSSProperties
+                      }
+                      title={agent}
+                    >
+                      <span className="block size-full animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)] [animation-duration:6.5s] motion-reduce:animate-none" />
+                    </span>
+                  ))}
+              </div>
+            </div>
+            <img
+              className="absolute top-1/2 left-1/2 z-[2] size-[154px] -translate-x-1/2 -translate-y-1/2"
+              src={hfLogo}
+              alt=""
+            />
           </div>
         </div>
       </section>
@@ -578,7 +554,6 @@ export function IncidentParty() {
       >
         <div className="mb-[52px] flex items-end justify-between gap-[50px] max-md:grid max-md:gap-[18px]">
           <div>
-            <SectionKicker number="04">Non-agent roles</SectionKicker>
             <h2 className="m-0 text-section-title">
               The supporting cast.
             </h2>
@@ -589,24 +564,23 @@ export function IncidentParty() {
           </p>
         </div>
         <div className="grid grid-cols-3 border-t border-l border-line max-md:grid-cols-1">
-          {supportingCast.map((actor, index) => (
+          {supportingCast.map((actor) => (
             <article
-              className="min-h-[285px] border-r border-b border-line p-[25px] transition-[background,transform] duration-180 hover:z-[1] hover:-translate-y-[3px] hover:bg-cream max-md:min-h-[240px]"
+              className="min-h-[285px] border-r border-b border-line p-[25px] transition-colors duration-180 hover:bg-cream max-md:min-h-[240px]"
               key={actor.name}
             >
-              <div className="flex items-start justify-between font-mono text-4xs text-[#85877f]">
+              <div className="flex items-start font-mono text-4xs text-[#85877f]">
                 <span className="grid size-[47px] place-items-center rounded-card border border-line bg-cream text-[22px] [filter:saturate(.7)]">
                   {actor.symbol}
                 </span>
-                <span>{String(index + 1).padStart(2, "0")}</span>
               </div>
               <h3 className="mt-[25px] mb-1.5 text-[23px] tracking-[-.035em]">
                 {actor.name}
               </h3>
-              <strong className="font-display text-[13px] font-medium text-[#616761] italic">
+              <strong className="font-display text-[15px] font-medium text-[#616761] italic">
                 {actor.role}
               </strong>
-              <p className="mt-[19px] text-[11px] leading-copy text-muted">
+              <p className="mt-[19px] text-[14px] leading-copy text-muted">
                 {actor.note}
               </p>
             </article>

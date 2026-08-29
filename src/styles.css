@@ -27,10 +27,10 @@
   --text-agent-title--line-height: 1;
   --text-agent-title--font-weight: 650;
   --text-agent-title--letter-spacing: -0.055em;
-  --text-2xs: 10px;
-  --text-3xs: 9px;
-  --text-4xs: 8px;
-  --text-5xs: 7px;
+  --text-2xs: 11px;
+  --text-3xs: 10px;
+  --text-4xs: 10px;
+  --text-5xs: 10px;
 
   --font-weight-kicker: 650;
   --font-weight-strong: 750;
@@ -55,6 +55,7 @@
   --animate-marquee: marquee 42s linear infinite;
   --animate-slow-spin: slow-spin 24s linear infinite;
   --animate-orbiter-bob: orbiter-bob 3s var(--delay) ease-in-out infinite;
+  --animate-orbit-pulse: orbit-pulse 5.5s ease-in-out infinite;
 
   @keyframes robot-hover {
     0%,
@@ -139,6 +140,16 @@
     }
     50% {
       margin-top: -8px;
+    }
+  }
+
+  @keyframes orbit-pulse {
+    0%,
+    100% {
+      transform: scale(0.92);
+    }
+    50% {
+      transform: scale(1.08);
     }
   }
 }

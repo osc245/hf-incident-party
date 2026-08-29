@@ -484,7 +484,7 @@ export const supportingCast = [
     name: "ExploitGym Scorer",
     role: "The imaginary strict bouncer",
     symbol: "🚩",
-    note: "Agents incorrectly believed a transcript-reading scorer would reject flags obtained by unintended means. Much of the plot follows from that mistake.",
+    note: "Agents incorrectly believed a transcript-reading scorer would reject flags obtained by unintended means.",
   },
   {
     name: "The Sandbox",
