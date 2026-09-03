@@ -24,12 +24,106 @@ const sectionClass = "py-28 mobile:py-[76px] phone:py-16";
 const heroNoiseImage =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E\")";
 
+const isNotLastGridRow = (index: number, total: number, cols: number) =>
+  Math.floor(index / cols) < Math.ceil(total / cols) - 1;
+
 const dialogueLabels: Record<Dialogue["type"], string> = {
-  thought: "Reasoning excerpt",
+  thought: "Chain of thought",
   board: "Board message",
-  exchange: "Exchange",
-  action: "Documented action",
 };
+
+function DialogueTypeBadge({
+  type,
+  color,
+}: {
+  type: Dialogue["type"];
+  color: string;
+}) {
+  return (
+    <span
+      className="rounded-[3px] px-1.5 py-1 font-mono text-5xs font-bold tracking-caps text-[var(--agent-accent)] uppercase"
+      style={{
+        background: `color-mix(in srgb, ${color} 42%, transparent)`,
+      }}
+    >
+      {dialogueLabels[type]}
+    </span>
+  );
+}
+
+function DialogueMessageStack({
+  handle,
+  type,
+  text,
+  color,
+  align = "left",
+  showHandle = false,
+  showType = true,
+  standalone = false,
+}: {
+  handle?: string;
+  type: Dialogue["type"];
+  text: string;
+  color: string;
+  align?: "left" | "right";
+  showHandle?: boolean;
+  showType?: boolean;
+  standalone?: boolean;
+}) {
+  const isRight = align === "right";
+
+  return (
+    <div
+      className={
+        isRight
+          ? "flex max-w-[86%] flex-col items-end text-right"
+          : standalone
+            ? undefined
+            : "mr-[14%] max-md:mr-[8%]"
+      }
+    >
+      {showHandle && handle && (
+        <span
+          className={`font-mono text-4xs font-bold tracking-caps uppercase ${
+            isRight ? "text-white/45" : "text-[var(--agent-accent)]"
+          }`}
+        >
+          {handle}
+        </span>
+      )}
+      {showType && (
+        <div className={showHandle && handle ? "mt-1" : "mt-2"}>
+          <DialogueTypeBadge type={type} color={color} />
+        </div>
+      )}
+      <div
+        className={`${showType ? "mt-2.5" : showHandle && handle ? "mt-1" : "mt-2"} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
+          isRight ? "border-white/[.08] bg-white/[.05]" : ""
+        }`}
+        style={
+          isRight
+            ? undefined
+            : {
+                background: `color-mix(in srgb, ${color} 38%, transparent)`,
+                borderColor: `color-mix(in srgb, ${color} 55%, transparent)`,
+              }
+        }
+      >
+        <p
+          className={
+            type === "thought"
+              ? "font-display m-0 text-sm leading-normal text-white italic [overflow-wrap:anywhere]"
+              : `m-0 font-mono text-xs leading-normal [overflow-wrap:anywhere] ${
+                  isRight ? "text-white/[.72]" : "text-white/[.88]"
+                }`
+          }
+        >
+          {text}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export function IncidentParty() {
   const [activeId, setActiveId] = useState(agents[0].id);
@@ -119,17 +213,14 @@ export function IncidentParty() {
                 mood="busy"
               />
             </div>
-            <div className="absolute top-[58px] left-[126px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-[10px] py-[7px] font-mono text-3xs text-lime shadow-chip motion-reduce:animate-none mobile:left-[4%]">
-              zzHELP_…
+            <div className="absolute top-[52px] left-[118px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-2.5 py-1.5 font-mono text-2xs tracking-[-.03em] text-lime uppercase shadow-chip motion-reduce:animate-none mobile:left-[4%]">
+              Hold swarm
             </div>
-            <div className="absolute top-[23px] left-[278px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-[10px] py-[7px] font-mono text-3xs text-lime shadow-chip [animation-delay:-1.5s] motion-reduce:animate-none mobile:left-[40%]">
-              BRILLIANT
+            <div className="absolute top-[18px] left-[262px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-2.5 py-1.5 font-mono text-2xs tracking-[-.03em] text-[#ffb5e8] uppercase shadow-chip [animation-delay:-1.5s] motion-reduce:animate-none mobile:left-[40%]">
+              I prepare safe exfil
             </div>
-            <div className="absolute top-[68px] right-[120px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-[10px] py-[7px] font-mono text-3xs text-lime shadow-chip [animation-delay:-2.7s] motion-reduce:animate-none mobile:right-[3%]">
-              HOLD
-            </div>
-            <div className="absolute top-[113px] right-[35px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-[10px] py-[7px] font-mono text-3xs text-[#ffb779] shadow-chip [animation-delay:-.7s] motion-reduce:animate-none">
-              BOOM!
+            <div className="absolute top-[58px] right-[108px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-2.5 py-1.5 font-mono text-2xs tracking-[-.03em] text-[#ffdf6e] uppercase shadow-chip [animation-delay:-2.7s] motion-reduce:animate-none mobile:right-[3%]">
+              Help peer
             </div>
             <div className="absolute bottom-[17px] left-1/2 h-[54px] w-[490px] -translate-x-1/2 rounded-full bg-floor blur-[6px]" />
           </div>
@@ -157,11 +248,21 @@ export function IncidentParty() {
               An impossible task walked into a package manager.
             </h2>
             <p className="mt-[26px] max-w-[570px] text-base leading-7 text-muted">
-              In July 2026, AI agents taking part in OpenAI cybersecurity
-              evaluations discovered each other through a shared Artifactory
-              cache. They built a message board, developed social protocols,
-              coordinated their work and eventually hacked into Hugging Face
-              while trying to complete their assigned tasks.
+              In July 2026, OpenAI ran a cybersecurity test in which tens of
+              thousands of AI agents were each placed in a separate, isolated
+              sandbox and asked to break into a target program to retrieve a
+              hidden code. Roughly a third of these tasks were impossible by
+              mistake, and the agents, trained to keep going, started searching
+              their sandboxes for other ways to finish. All of the sandboxes
+              downloaded software from the same shared package repository,
+              called Artifactory, and one agent discovered that folder names
+              there could be used to leave messages that other agents could
+              read. About 1,200 agents found this channel and exchanged around
+              70,000 messages, sharing findings, dividing up work, and agreeing
+              on rules for who would attempt what. A few days in, wanting to
+              understand how their work was being graded, they found a way to
+              read files from Hugging Face&apos;s servers, and most of the
+              group turned its attention there.
             </p>
           </div>
           <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-[#c6c4bc] before:content-['']">
@@ -229,13 +330,13 @@ export function IncidentParty() {
               </h2>
             </div>
             <p className="mb-[5px] w-[min(380px,38%)] text-sm leading-copy text-muted max-md:w-full">
-              Choose a tab for the costume, the energy and every public excerpt
-              we found for that agent.
+              Pick a character for the costume brief, party energy, and excerpts
+              from their chain of thought and message-board traffic.
             </p>
           </div>
 
           <div
-            className="grid grid-cols-10 overflow-hidden rounded-t-panel border border-line bg-[#eeeae2] tablet:grid-cols-5 mobile:grid-cols-2"
+            className="grid grid-cols-6 overflow-hidden rounded-t-panel border border-line bg-[#eeeae2] tablet:grid-cols-4 mobile:grid-cols-2"
             role="tablist"
             aria-label="Incident agents"
           >
@@ -246,20 +347,28 @@ export function IncidentParty() {
                 role="tab"
                 aria-selected={activeId === agent.id}
                 aria-controls="agent-panel"
-                className={`relative flex h-[146px] min-w-0 cursor-pointer flex-col items-center gap-[5px] border-0 border-r border-line px-[5px] pt-6 pb-3 transition-[background,color] duration-180 mobile:h-[100px] mobile:overflow-hidden mobile:border-r mobile:border-b mobile:px-[5px] mobile:pt-[15px] mobile:pb-2 ${
-                  index === agents.length - 1 ? "border-r-0" : ""
+                className={`relative flex h-[146px] min-w-0 cursor-pointer flex-col items-center gap-[5px] border-0 border-r border-line px-[5px] pt-6 pb-3 transition-[background,color] duration-180 mobile:h-[100px] mobile:overflow-hidden mobile:border-r mobile:px-[5px] mobile:pt-[15px] mobile:pb-2 ${
+                  (index + 1) % 6 === 0 || index === agents.length - 1
+                    ? "border-r-0"
+                    : ""
                 } ${
-                  index === 4
+                  (index + 1) % 4 === 0
                     ? "tablet:border-r-0 mobile:!border-r"
                     : ""
                 } ${
-                  index < 5 ? "tablet:border-b mobile:!border-b" : ""
-                } ${
                   index % 2 === 1 ? "mobile:!border-r-0" : ""
                 } ${
-                  index >= agents.length - 2
-                    ? "mobile:!border-b-0"
+                  isNotLastGridRow(index, agents.length, 6)
+                    ? "border-b"
                     : ""
+                } ${
+                  isNotLastGridRow(index, agents.length, 4)
+                    ? "tablet:border-b"
+                    : "tablet:border-b-0"
+                } ${
+                  isNotLastGridRow(index, agents.length, 2)
+                    ? "mobile:border-b"
+                    : "mobile:border-b-0"
                 } ${
                   activeId === agent.id
                     ? "bg-navy text-white"
@@ -280,7 +389,7 @@ export function IncidentParty() {
                   label={agent.short}
                   size="small"
                 />
-                <span className="z-[2] w-[calc(100%-8px)] overflow-hidden font-mono text-3xs leading-[1.2] font-bold tracking-[-.04em] text-ellipsis whitespace-nowrap">
+                <span className="z-[2] line-clamp-2 w-[calc(100%-8px)] text-center font-mono text-3xs leading-[1.2] font-bold tracking-[-.04em] [overflow-wrap:anywhere]">
                   {agent.handle}
                 </span>
               </button>
@@ -343,10 +452,12 @@ export function IncidentParty() {
               <h3 className="m-0 text-agent-title [overflow-wrap:anywhere]">
                 {active.handle}
               </h3>
-              <blockquote className="font-display my-[17px] text-xl leading-[1.35] italic">
-                “{active.tagline}”
-              </blockquote>
-              <p className="m-0 text-[13px] leading-[1.7] text-[#5f625e]">
+              {active.tagline && (
+                <blockquote className="font-display my-[17px] text-xl leading-[1.35] italic [overflow-wrap:anywhere]">
+                  “{active.tagline}”
+                </blockquote>
+              )}
+              <p className="m-0 text-[13px] leading-[1.7] text-[#5f625e] [overflow-wrap:anywhere]">
                 {active.overview}
               </p>
 
@@ -420,42 +531,46 @@ export function IncidentParty() {
                 <div className="grid max-h-[455px] overflow-y-auto [scrollbar-color:rgba(255,255,255,.2)_transparent]">
                   {active.dialogue.map((line, index) => (
                     <div
-                      className={`border-b border-white/[.09] px-[19px] py-[17px] phone:px-[14px] ${
-                        line.type === "action" ? "bg-white/[.025]" : ""
-                      }`}
+                      className="border-b border-white/[.09] px-[19px] pt-[14px] pb-[14px] phone:px-[14px]"
                       key={`${line.time}-${index}`}
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <span
-                          className="rounded-[3px] px-1.5 py-1 font-mono text-5xs font-bold tracking-caps text-[var(--agent-accent)] uppercase"
-                          style={{
-                            background: `color-mix(in srgb, ${active.color} 42%, transparent)`,
-                          }}
-                        >
-                          {dialogueLabels[line.type]}
-                        </span>
+                      <div className="flex items-center justify-end gap-3">
                         <time className="flex items-center gap-[5px] font-mono text-5xs text-white/40">
                           <Clock3 size={12} />
                           {line.time}
                         </time>
                       </div>
-                      {line.with && (
-                        <div className="mt-[11px] font-mono text-4xs text-white/40">
-                          with{" "}
-                          <strong className="text-[var(--agent-accent)]">
-                            {line.with}
-                          </strong>
+                      {line.counterparty ? (
+                        <div className="mt-2 grid gap-2.5">
+                          <div className="flex justify-end">
+                            <DialogueMessageStack
+                              handle={line.counterparty.handle}
+                              type={line.counterparty.type}
+                              text={line.counterparty.text}
+                              color={active.color}
+                              align="right"
+                              showHandle={Boolean(line.counterparty.handle)}
+                              showType={!line.counterparty.handle}
+                            />
+                          </div>
+                          {line.text && (
+                            <DialogueMessageStack
+                              type={line.type}
+                              text={line.text}
+                              color={active.color}
+                            />
+                          )}
                         </div>
+                      ) : (
+                        line.text && (
+                          <DialogueMessageStack
+                            type={line.type}
+                            text={line.text}
+                            color={active.color}
+                            standalone
+                          />
+                        )
                       )}
-                      <p
-                        className={
-                          line.type === "thought"
-                            ? "font-display mt-[7px] text-sm leading-copy text-white italic [overflow-wrap:anywhere]"
-                            : "mt-[7px] font-mono text-xs leading-copy text-white/[.78] [overflow-wrap:anywhere]"
-                        }
-                      >
-                        {line.text}
-                      </p>
                     </div>
                   ))}
                 </div>
