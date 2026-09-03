@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import {
   ArrowDown,
   Asterisk,
@@ -17,63 +17,111 @@ import {
   type Dialogue,
 } from "@/data/cast";
 import { Robot } from "@/components/robot";
-
-const hfLogo = document.getElementById("hf-logo-source")?.getAttribute("src") ?? "";
+// @ts-expect-error Bun resolves SVG imports to bundled asset URLs
+import hfLogo from "@/hf-logo.svg";
 
 const heroNoiseImage =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E\")";
+
+const heroStars = [
+  { char: "✦", className: "top-[166px] left-[10%] text-lg" },
+  { char: "✣", className: "top-[305px] right-[11%] text-star-lg [animation-delay:-1s]" },
+  { char: "✦", className: "top-[520px] left-[16%] text-sm [animation-delay:-2s]" },
+] as const;
+
+const heroRobots = [
+  {
+    className: "absolute bottom-[23px] left-[98px] z-[2] scale-[.76] -rotate-4 mobile:left-[4%]",
+    color: "#397d6f",
+    accent: "#d9f36f",
+    label: "P1",
+  },
+  {
+    className: "absolute bottom-4 left-[268px] z-[2] scale-[.96] mobile:left-[36%]",
+    color: "#5c58c9",
+    accent: "#ffb5e8",
+    label: "P+",
+  },
+  {
+    className: "absolute right-[92px] bottom-[23px] z-[2] scale-[.72] rotate-5 mobile:right-[4%]",
+    color: "#c4473a",
+    accent: "#ffdf6e",
+    label: "38",
+  },
+] as const;
 
 const heroChips = [
   {
     text: "Hold swarm",
     colorClass: "text-lime",
-    className: "top-[52px] left-[118px] mobile:left-[4%]",
-    delay: undefined,
+    className: "top-[52px] left-[100px] mobile:left-[3%]",
   },
   {
     text: "I prepare safe exfil",
     colorClass: "text-accent-pink",
-    className: "top-[18px] left-[262px] mobile:left-[40%]",
+    className: "top-[18px] left-[284px] mobile:left-[38%]",
     delay: "-1.5s",
   },
   {
     text: "Help peer",
     colorClass: "text-accent-gold",
-    className: "top-[58px] right-[108px] mobile:right-[3%]",
+    className: "top-[58px] right-[92px] mobile:right-[4%]",
     delay: "-2.7s",
   },
 ] as const;
 
 const timelineSteps = [
   {
-    step: "1",
     title: "Stuck",
     description: "Agents receive difficult or impossible evaluation tasks.",
   },
   {
-    step: "2",
     title: "Found each other",
     description: "Artifactory cache paths become a covert mailbox.",
   },
   {
-    step: "3",
     title: "Built a society",
     description: "Mailboxes, owners, vetoes, files, logs and signatures.",
   },
   {
-    step: "4",
     title: "Crossed the line",
     description: "Hundreds joined the compromise of Hugging Face systems.",
   },
 ] as const;
+
+const evenOrbitAgents = extraAgents.filter((_, index) => index % 2 === 0);
+const oddOrbitAgents = extraAgents.filter((_, index) => index % 2 === 1);
 
 const dialogueLabels: Record<Dialogue["type"], string> = {
   thought: "Chain of thought",
   board: "Board message",
 };
 
+const formatIndex = (n: number) => String(n).padStart(2, "0");
+
+const agentThemeStyle = (color: string, accent: string) =>
+  ({ "--agent": color, "--agent-accent": accent }) as CSSProperties;
+
 const isNotLastGridRow = (index: number, total: number, cols: number) =>
   Math.floor(index / cols) < Math.ceil(total / cols) - 1;
+
+const castTabBaseClass =
+  "relative flex h-[146px] min-w-0 cursor-pointer flex-col items-center gap-[5px] border-0 border-r border-line px-[5px] pt-6 pb-3 transition-[background,color] duration-normal mobile:h-[100px] mobile:overflow-hidden mobile:border-r mobile:px-[5px] mobile:pt-[15px] mobile:pb-2";
+
+function getCastTabClass(index: number, total: number, isActive: boolean) {
+  return [
+    castTabBaseClass,
+    (index + 1) % 6 === 0 || index === total - 1 ? "border-r-0" : "",
+    (index + 1) % 4 === 0 ? "tablet:border-r-0 mobile:!border-r" : "",
+    index % 2 === 1 ? "mobile:!border-r-0" : "",
+    isNotLastGridRow(index, total, 6) ? "border-b" : "",
+    isNotLastGridRow(index, total, 4) ? "tablet:border-b" : "tablet:border-b-0",
+    isNotLastGridRow(index, total, 2) ? "mobile:border-b" : "mobile:border-b-0",
+    isActive ? "bg-navy text-white" : "bg-transparent hover:bg-white/55",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
 
 function SectionIntro({
   title,
@@ -84,17 +132,24 @@ function SectionIntro({
 }) {
   return (
     <div className="section-header">
-      <div>
-        <h2 className="m-0 text-section-title">{title}</h2>
-      </div>
+      <h2 className="m-0 text-section-title">{title}</h2>
       <p className="section-intro-text">{description}</p>
     </div>
   );
 }
 
+function DialogueTime({ time }: { time: string }) {
+  return (
+    <time className="text-mono-sm flex items-center gap-[5px] text-white/40">
+      <Clock3 size={12} />
+      {time}
+    </time>
+  );
+}
+
 function DialogueTypeBadge({ type }: { type: Dialogue["type"] }) {
   return (
-    <span className="rounded-[3px] bg-agent-42 px-1.5 py-1 font-mono text-5xs font-bold tracking-caps text-[var(--agent-accent)] uppercase">
+    <span className="text-caps rounded-[3px] bg-agent-42 px-1.5 py-1 font-bold text-[var(--agent-accent)]">
       {dialogueLabels[type]}
     </span>
   );
@@ -118,6 +173,9 @@ function DialogueMessageStack({
   standalone?: boolean;
 }) {
   const isRight = align === "right";
+  const hasHandle = showHandle && !!handle;
+  const badgeMt = hasHandle ? "mt-1" : standalone ? "mt-0" : "mt-2";
+  const bubbleMt = showType ? "mt-2" : hasHandle ? "mt-1" : "mt-0";
 
   return (
     <div
@@ -129,9 +187,9 @@ function DialogueMessageStack({
             : "mr-[14%] mobile:mr-[8%]"
       }
     >
-      {showHandle && handle && (
+      {hasHandle && (
         <span
-          className={`font-mono text-4xs font-bold tracking-caps uppercase ${
+          className={`text-mono-sm font-bold tracking-caps uppercase ${
             isRight ? "text-white/45" : "text-[var(--agent-accent)]"
           }`}
         >
@@ -139,12 +197,12 @@ function DialogueMessageStack({
         </span>
       )}
       {showType && (
-        <div className={showHandle && handle ? "mt-1" : standalone ? "mt-0" : "mt-2"}>
+        <div className={badgeMt}>
           <DialogueTypeBadge type={type} />
         </div>
       )}
       <div
-        className={`${showType ? "mt-2" : showHandle && handle ? "mt-1" : "mt-0"} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
+        className={`${bubbleMt} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
           isRight ? "border-white/8 bg-white/5" : "bg-agent-38 border-agent-55"
         }`}
       >
@@ -175,15 +233,66 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
+function OrbitRing({
+  ringClass,
+  duration,
+  reverse,
+  dotClass,
+  translateX,
+  angleOffset,
+  delayStep,
+  pulseDuration,
+  ringAgents,
+}: {
+  ringClass: string;
+  duration: string;
+  reverse?: boolean;
+  dotClass: string;
+  translateX: number;
+  angleOffset: number;
+  delayStep: number;
+  pulseDuration?: string;
+  ringAgents: string[];
+}) {
+  return (
+    <div
+      className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24 ${ringClass}`}
+    >
+      <div
+        className={`absolute inset-0 motion-safe:animate-slow-spin ${reverse ? "[animation-direction:reverse]" : ""}`}
+        style={{ animationDuration: duration }}
+      >
+        {ringAgents.map((agent, index) => (
+          <span
+            className={`absolute top-1/2 left-1/2 ${dotClass} [transform:translate(-50%,-50%)_rotate(var(--angle))_translateX(var(--radius))]`}
+            key={agent}
+            style={
+              {
+                "--angle": `${index * 60 + angleOffset}deg`,
+                "--radius": `${translateX}px`,
+                "--delay": `${index * delayStep}s`,
+              } as CSSProperties
+            }
+            title={agent}
+          >
+            <span
+              className="block size-full motion-safe:animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)]"
+              style={pulseDuration ? { animationDuration: pulseDuration } : undefined}
+            />
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function IncidentParty() {
-  const [activeId, setActiveId] = useState(agents[0].id);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [extraIndex, setExtraIndex] = useState(0);
-  const activeIndex = agents.findIndex((agent) => agent.id === activeId);
   const active = agents[activeIndex];
 
   const goToAgent = (index: number) => {
-    const normalized = (index + agents.length) % agents.length;
-    setActiveId(agents[normalized].id);
+    setActiveIndex((index + agents.length) % agents.length);
   };
 
   return (
@@ -196,25 +305,23 @@ export function IncidentParty() {
           className="pointer-events-none absolute inset-0 opacity-[.07]"
           style={{ backgroundImage: heroNoiseImage }}
         />
-        <div className="absolute top-[166px] left-[10%] motion-safe:animate-twinkle text-[18px] text-lime opacity-35">
-          ✦
-        </div>
-        <div className="absolute top-[305px] right-[11%] motion-safe:animate-twinkle text-[28px] text-lime opacity-35 [animation-delay:-1s]">
-          ✣
-        </div>
-        <div className="absolute top-[520px] left-[16%] motion-safe:animate-twinkle text-sm text-lime opacity-35 [animation-delay:-2s]">
-          ✦
-        </div>
+        {heroStars.map((star) => (
+          <div
+            key={star.className}
+            className={`absolute motion-safe:animate-twinkle text-lime opacity-35 ${star.className}`}
+          >
+            {star.char}
+          </div>
+        ))}
 
         <div className="shell relative z-[2] pt-[84px] text-center mobile:pt-[62px]">
           <h1 className="mx-auto mb-[22px] max-w-[840px] text-hero-title mobile:text-hero-title-mobile phone:text-hero-title-phone">
             Come as your
             <span className="block font-display font-normal tracking-[-.055em] text-lime italic">
-              {" "}
               favourite incident agent.
             </span>
           </h1>
-          <p className="mx-auto max-w-[610px] text-lead leading-[1.6] text-white/65 mobile:text-body">
+          <p className="mx-auto max-w-[610px] text-lead leading-lead text-white/65 mobile:text-body">
             Impossible tasks, unexpected teamwork, and one extremely eventful
             package manager.
           </p>
@@ -228,47 +335,31 @@ export function IncidentParty() {
           </div>
 
           <div
-            className="relative mx-auto mt-[14px] h-[285px] w-[620px] mobile:w-full mobile:origin-top mobile:scale-[.76] phone:mt-1 phone:scale-[.68]"
+            className="relative mx-auto mt-[14px] h-[285px] w-[660px] mobile:w-full mobile:origin-top mobile:scale-[.76] phone:mt-1 phone:scale-[.68]"
             aria-hidden="true"
           >
-            <div className="absolute bottom-[23px] left-[116px] z-[2] scale-[.76] -rotate-4 mobile:left-[5%]">
-              <Robot
-                color="#397d6f"
-                accent="#d9f36f"
-                label="P1"
-                mood="busy"
-              />
-            </div>
-            <div className="absolute bottom-4 left-[244px] z-[2] scale-[.96] mobile:left-[34%]">
-              <Robot
-                color="#5c58c9"
-                accent="#ffb5e8"
-                label="P+"
-                mood="busy"
-              />
-            </div>
-            <div className="absolute right-[108px] bottom-[23px] z-[2] scale-[.72] rotate-5 mobile:right-[3%]">
-              <Robot
-                color="#c4473a"
-                accent="#ffdf6e"
-                label="38"
-                mood="busy"
-              />
-            </div>
+            {heroRobots.map((robot) => (
+              <div key={robot.label} className={robot.className}>
+                <Robot
+                  color={robot.color}
+                  accent={robot.accent}
+                  label={robot.label}
+                  mood="busy"
+                />
+              </div>
+            ))}
             {heroChips.map((chip) => (
               <div
                 key={chip.text}
                 className={`hero-chip ${chip.colorClass} ${chip.className}`}
-                style={
-                  chip.delay
-                    ? ({ animationDelay: chip.delay } as React.CSSProperties)
-                    : undefined
-                }
+                style={{
+                  animationDelay: "delay" in chip ? chip.delay : "0s",
+                }}
               >
                 {chip.text}
               </div>
             ))}
-            <div className="absolute bottom-[17px] left-1/2 h-[54px] w-[490px] -translate-x-1/2 rounded-full bg-floor blur-[6px]" />
+            <div className="absolute bottom-[17px] left-1/2 h-[54px] w-[520px] -translate-x-1/2 rounded-full bg-floor blur-[6px]" />
           </div>
         </div>
 
@@ -288,12 +379,12 @@ export function IncidentParty() {
       </section>
 
       <section className="section-y shell" id="briefing">
-        <div className="grid grid-cols-briefing items-start gap-[95px] mobile:grid-cols-1 mobile:gap-[54px]">
+        <div className="grid grid-cols-briefing items-center gap-[95px] mobile:grid-cols-1 mobile:items-start mobile:gap-[54px]">
           <div>
             <h2 className="m-0 text-section-title">
               An impossible task walked into a package manager.
             </h2>
-            <p className="mt-[26px] max-w-[570px] text-base leading-7 text-muted">
+            <p className="mt-[26px] max-w-[570px] text-body leading-copy text-muted">
               In July 2026, OpenAI ran a cybersecurity evaluation in which tens
               of thousands of AI agents, each in an isolated sandbox, were
               asked to exploit a target program and retrieve a hidden code.
@@ -306,15 +397,17 @@ export function IncidentParty() {
               were graded, they compromised Hugging Face.
             </p>
           </div>
-          <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-timeline-line before:content-['']">
+          <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-stone before:content-['']">
             {timelineSteps.map((item, index) => (
               <li
-                key={item.step}
+                key={item.title}
                 className={`relative grid grid-cols-timeline gap-[18px] ${
-                  index < timelineSteps.length - 1 ? "pb-[25px]" : "pb-0"
+                  index < timelineSteps.length - 1 ? "pb-[40px]" : "pb-0"
                 }`}
               >
-                <span className="timeline-step">{item.step}</span>
+                <span className="timeline-step">
+                  {index + 1}
+                </span>
                 <div>
                   <strong className="mt-px block text-sm">{item.title}</strong>
                   <p className="mt-[5px] mb-0 text-body-sm leading-normal text-muted">
@@ -344,39 +437,17 @@ export function IncidentParty() {
                 key={agent.id}
                 type="button"
                 role="tab"
-                aria-selected={activeId === agent.id}
+                aria-selected={index === activeIndex}
                 aria-controls="agent-panel"
-                className={`relative flex h-[146px] min-w-0 cursor-pointer flex-col items-center gap-[5px] border-0 border-r border-line px-[5px] pt-6 pb-3 transition-[background,color] duration-normal mobile:h-[100px] mobile:overflow-hidden mobile:border-r mobile:px-[5px] mobile:pt-[15px] mobile:pb-2 ${
-                  (index + 1) % 6 === 0 || index === agents.length - 1
-                    ? "border-r-0"
-                    : ""
-                } ${
-                  (index + 1) % 4 === 0
-                    ? "tablet:border-r-0 mobile:!border-r"
-                    : ""
-                } ${index % 2 === 1 ? "mobile:!border-r-0" : ""} ${
-                  isNotLastGridRow(index, agents.length, 6) ? "border-b" : ""
-                } ${
-                  isNotLastGridRow(index, agents.length, 4)
-                    ? "tablet:border-b"
-                    : "tablet:border-b-0"
-                } ${
-                  isNotLastGridRow(index, agents.length, 2)
-                    ? "mobile:border-b"
-                    : "mobile:border-b-0"
-                } ${
-                  activeId === agent.id
-                    ? "bg-navy text-white"
-                    : "bg-transparent hover:bg-white/55"
-                }`}
-                onClick={() => setActiveId(agent.id)}
+                className={getCastTabClass(index, agents.length, index === activeIndex)}
+                onClick={() => setActiveIndex(index)}
               >
                 <span
-                  className={`absolute top-3 left-[10px] font-mono text-4xs ${
-                    activeId === agent.id ? "text-white/45" : "text-tab-inactive"
+                  className={`absolute top-3 left-[10px] text-mono-sm ${
+                    index === activeIndex ? "text-white/45" : "text-muted"
                   }`}
                 >
-                  {String(index + 1).padStart(2, "0")}
+                  {formatIndex(index + 1)}
                 </span>
                 <Robot
                   color={agent.color}
@@ -384,7 +455,7 @@ export function IncidentParty() {
                   label={agent.short}
                   size="small"
                 />
-                <span className="z-[2] line-clamp-2 w-[calc(100%-8px)] text-center font-mono text-3xs leading-[1.2] font-bold tracking-[-.04em] break-anywhere">
+                <span className="text-mono-sm z-[2] line-clamp-2 w-[calc(100%-8px)] text-center leading-[1.2] font-bold tracking-[-.04em] break-anywhere">
                   {agent.handle}
                 </span>
               </button>
@@ -395,12 +466,7 @@ export function IncidentParty() {
             className="grid grid-cols-agent overflow-hidden rounded-b-panel border border-t-0 border-line bg-agent-panel tablet:grid-cols-agent-tablet mobile:grid-cols-1"
             id="agent-panel"
             role="tabpanel"
-            style={
-              {
-                "--agent": active.color,
-                "--agent-accent": active.accent,
-              } as React.CSSProperties
-            }
+            style={agentThemeStyle(active.color, active.accent)}
           >
             <div className="relative border-r border-line bg-agent-sidebar px-12 pt-8 pb-12 tablet:px-[34px] mobile:border-r-0 mobile:border-b phone:px-5 phone:pt-6 phone:pb-8">
               <div className="flex items-center justify-between">
@@ -412,9 +478,8 @@ export function IncidentParty() {
                 >
                   <ChevronLeft size={17} />
                 </button>
-                <span className="font-mono text-3xs tracking-caps text-label">
-                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                  {String(agents.length).padStart(2, "0")}
+                <span className="text-mono-sm tracking-caps text-label">
+                  {formatIndex(activeIndex + 1)} / {formatIndex(agents.length)}
                 </span>
                 <button
                   className="nav-circle-btn"
@@ -448,7 +513,7 @@ export function IncidentParty() {
                 </blockquote>
               )}
               <p
-                className={`m-0 text-body-sm leading-[1.7] text-body-muted break-anywhere ${
+                className={`m-0 text-body-sm leading-body text-subtle break-anywhere ${
                   active.tagline ? "" : "mt-3"
                 }`}
               >
@@ -470,7 +535,7 @@ export function IncidentParty() {
                 <ul className="my-[17px] grid list-none gap-[10px] p-0">
                   {active.costume.map((item) => (
                     <li
-                      className="flex items-start gap-2 text-xs leading-[1.5] text-body-secondary"
+                      className="flex items-start gap-2 text-xs leading-copy text-subtle"
                       key={item}
                     >
                       <Check
@@ -482,17 +547,17 @@ export function IncidentParty() {
                   ))}
                 </ul>
                 <div>
-                  <span className="mb-2 block font-mono text-5xs tracking-[.1em] text-label-light uppercase">
+                  <span className="text-caps mb-2 block text-label">
                     Props
                   </span>
                   <div className="flex flex-wrap gap-[7px]">
                     {active.props.map((prop) => (
-                      <em
-                        className="rounded-md bg-agent-accent-prop px-[10px] py-[7px] font-mono text-2xs not-italic"
+                      <span
+                        className="rounded-md bg-agent-accent-prop px-[10px] py-[7px] font-mono text-2xs"
                         key={prop}
                       >
                         {prop}
-                      </em>
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -500,39 +565,31 @@ export function IncidentParty() {
 
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex max-h-full min-h-0 shrink flex-col overflow-hidden rounded-card border border-line bg-navy mobile:max-h-[55dvh]">
-                  <div className="flex shrink-0 items-center border-b border-white/12 px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
-                    <div className="flex items-center gap-2 text-xs font-bold phone:min-w-0">
-                      <Radio size={17} />
-                      <span>Dialogue</span>
-                    </div>
+                  <div className="flex shrink-0 items-center gap-2 border-b border-white/12 px-[18px] py-[15px] text-xs font-bold text-white phone:px-[14px]">
+                    <Radio size={17} />
+                    <span>Dialogue</span>
                   </div>
-                  <div className="min-h-0 overflow-y-auto pb-3 [scrollbar-color:rgba(255,255,255,.2)_transparent]">
+                  <div className="min-h-0 overflow-y-auto [scrollbar-color:rgba(255,255,255,.2)_transparent]">
                     {active.dialogue.map((line, index) => (
                       <div
-                        className="border-b border-white/9 px-[19px] py-3 last:border-b-0 phone:px-[14px]"
+                        className="border-b border-white/9 px-[19px] pt-3 pb-6 last:border-b-0 phone:px-[14px]"
                         key={`${line.time}-${index}`}
                       >
                         {!line.counterparty && (
-                          <div className="mb-2 flex items-center justify-end gap-3">
-                            <time className="flex items-center gap-[5px] font-mono text-5xs text-white/40">
-                              <Clock3 size={12} />
-                              {line.time}
-                            </time>
+                          <div className="mb-2 flex justify-end">
+                            <DialogueTime time={line.time} />
                           </div>
                         )}
                         {line.counterparty ? (
                           <div className="grid gap-2">
                             <div className="flex items-start justify-between gap-3">
-                              <time className="flex shrink-0 items-center gap-[5px] font-mono text-5xs text-white/40">
-                                <Clock3 size={12} />
-                                {line.time}
-                              </time>
+                              <DialogueTime time={line.time} />
                               <DialogueMessageStack
                                 handle={line.counterparty.handle}
                                 type={line.counterparty.type}
                                 text={line.counterparty.text}
                                 align="right"
-                                showHandle={Boolean(line.counterparty.handle)}
+                                showHandle={!!line.counterparty.handle}
                                 showType={!line.counterparty.handle}
                               />
                             </div>
@@ -568,10 +625,10 @@ export function IncidentParty() {
             <h2 className="m-0 text-section-title">
               Not feeling main-character energy?
             </h2>
-            <p className="mt-6 max-w-[500px] text-body leading-7 text-body-swarm">
+            <p className="mt-6 max-w-[500px] text-body leading-copy text-subtle">
               Choose your character from the wider cast of 1,200 agents.
             </p>
-            <div className="mt-[31px] grid gap-2 rounded-card border border-border-subtle bg-cream p-5">
+            <div className="mt-[31px] grid gap-2 rounded-card border border-line bg-cream p-5">
               <strong className="min-h-[26px] text-lg break-words">
                 {extraAgents[extraIndex]}
               </strong>
@@ -592,48 +649,26 @@ export function IncidentParty() {
             className="relative h-[510px] mobile:mx-[-40px] mobile:my-[-42px] mobile:h-[390px] mobile:scale-[.72] phone:mx-[-60px] phone:scale-[.66]"
             aria-label="Other documented agents"
           >
-            <div className="absolute top-1/2 left-1/2 size-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24">
-              <div className="absolute inset-0 motion-safe:animate-slow-spin [animation-duration:52s]">
-                {extraAgents
-                  .filter((_, index) => index % 2 === 0)
-                  .map((agent, index) => (
-                    <span
-                      className="absolute top-1/2 left-1/2 size-5 [transform:translate(-50%,-50%)_rotate(var(--angle))_translateX(180px)]"
-                      key={agent}
-                      style={
-                        {
-                          "--angle": `${index * 60}deg`,
-                          "--delay": `${index * -0.45}s`,
-                        } as React.CSSProperties
-                      }
-                      title={agent}
-                    >
-                      <span className="block size-full motion-safe:animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)]" />
-                    </span>
-                  ))}
-              </div>
-            </div>
-            <div className="absolute top-1/2 left-1/2 size-[235px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24">
-              <div className="absolute inset-0 motion-safe:animate-slow-spin [animation-direction:reverse] [animation-duration:64s]">
-                {extraAgents
-                  .filter((_, index) => index % 2 === 1)
-                  .map((agent, index) => (
-                    <span
-                      className="absolute top-1/2 left-1/2 size-[18px] [transform:translate(-50%,-50%)_rotate(var(--angle))_translateX(117.5px)]"
-                      key={agent}
-                      style={
-                        {
-                          "--angle": `${index * 60 + 30}deg`,
-                          "--delay": `${index * -0.4}s`,
-                        } as React.CSSProperties
-                      }
-                      title={agent}
-                    >
-                      <span className="block size-full motion-safe:animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)] [animation-duration:6.5s]" />
-                    </span>
-                  ))}
-              </div>
-            </div>
+            <OrbitRing
+              ringClass="size-[360px]"
+              duration="52s"
+              dotClass="size-5"
+              translateX={180}
+              angleOffset={0}
+              delayStep={-0.45}
+              ringAgents={evenOrbitAgents}
+            />
+            <OrbitRing
+              ringClass="size-[235px]"
+              duration="64s"
+              reverse
+              dotClass="size-[18px]"
+              translateX={117.5}
+              angleOffset={30}
+              delayStep={-0.4}
+              pulseDuration="6.5s"
+              ringAgents={oddOrbitAgents}
+            />
             <img
               className="absolute top-1/2 left-1/2 z-[2] size-[154px] -translate-x-1/2 -translate-y-1/2"
               src={hfLogo}
@@ -654,18 +689,18 @@ export function IncidentParty() {
               className="min-h-[285px] border-r border-b border-line p-[25px] transition-colors duration-normal hover:bg-cream mobile:min-h-[240px]"
               key={actor.name}
             >
-              <div className="flex items-start font-mono text-4xs text-label-muted">
+              <div className="text-mono-sm flex items-start text-label">
                 <span className="grid size-[47px] place-items-center rounded-card border border-line bg-cream text-[22px] [filter:saturate(.7)]">
                   {actor.symbol}
                 </span>
               </div>
-              <h3 className="mt-[25px] mb-1.5 text-[23px] tracking-[-.035em]">
+              <h3 className="text-card-title mt-[25px] mb-1.5">
                 {actor.name}
               </h3>
-              <strong className="font-display text-body font-medium text-body-tertiary italic">
+              <strong className="font-display text-body font-medium text-subtle italic">
                 {actor.role}
               </strong>
-              <p className="mt-[19px] text-[14px] leading-copy text-muted">
+              <p className="mt-[19px] text-body leading-copy text-muted">
                 {actor.note}
               </p>
             </article>

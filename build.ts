@@ -14,4 +14,3 @@ if (!result.success) {
   console.error(result.logs);
   process.exit(1);
 }
-
