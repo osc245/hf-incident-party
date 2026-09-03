@@ -256,10 +256,15 @@ function OrbitRing({
 }) {
   return (
     <div
-      className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24 ${ringClass}`}
+      className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${ringClass}`}
     >
       <div
-        className={`absolute inset-0 motion-safe:animate-slow-spin ${reverse ? "[animation-direction:reverse]" : ""}`}
+        className={[
+          "absolute inset-0 rounded-full border border-dashed border-ink/24",
+          reverse
+            ? "motion-safe:animate-slow-spin-reverse"
+            : "motion-safe:animate-slow-spin",
+        ].join(" ")}
         style={{ animationDuration: duration }}
       >
         {ringAgents.map((agent, index) => (

@@ -75,6 +75,7 @@
   --animate-twinkle: twinkle 3s ease-in-out infinite;
   --animate-marquee: marquee 42s linear infinite;
   --animate-slow-spin: slow-spin 24s linear infinite;
+  --animate-slow-spin-reverse: slow-spin 24s linear infinite reverse;
   --animate-orbiter-bob: orbiter-bob 3s var(--delay) ease-in-out infinite;
   --animate-orbit-pulse: orbit-pulse 5.5s ease-in-out infinite;
 
