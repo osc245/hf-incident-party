@@ -304,7 +304,6 @@ export function IncidentParty() {
     <main className="min-h-screen bg-paper font-sans text-ink">
       <section
         className="relative min-h-[854px] overflow-hidden bg-navy bg-hero text-white mobile:min-h-[784px]"
-        id="top"
       >
         <div
           className="pointer-events-none absolute inset-0 opacity-[.07]"
@@ -349,7 +348,7 @@ export function IncidentParty() {
                   color={robot.color}
                   accent={robot.accent}
                   label={robot.label}
-                  mood="busy"
+                  busy
                 />
               </div>
             ))}
@@ -502,7 +501,7 @@ export function IncidentParty() {
                   color={active.color}
                   accent={active.accent}
                   label={active.short}
-                  mood="busy"
+                  busy
                 />
               </div>
 
@@ -683,7 +682,7 @@ export function IncidentParty() {
         </div>
       </section>
 
-      <section className="section-y shell bg-paper" id="supporting-cast">
+      <section className="section-y shell bg-paper">
         <SectionIntro
           title="The supporting cast."
           description="For guests who would rather arrive as infrastructure, institutions or the evaluation environment itself."

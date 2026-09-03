@@ -48,7 +48,6 @@
   --text-card-title: 23px;
   --text-star-lg: 28px;
 
-  --font-weight-kicker: 650;
   --font-weight-strong: 750;
   --tracking-caps: 0.08em;
   --leading-lead: 1.6;
@@ -61,7 +60,6 @@
   --radius-panel: 13px;
 
   --shadow-chip: 0 8px 24px rgba(0, 0, 0, 0.16);
-  --shadow-orbit: 0 18px 40px rgba(22, 24, 36, 0.18);
   --shadow-orbiter: 0 5px 18px rgba(22, 24, 36, 0.08);
 
   --duration-fast: 160ms;
@@ -76,7 +74,6 @@
   --animate-marquee: marquee 42s linear infinite;
   --animate-slow-spin: slow-spin 24s linear infinite;
   --animate-slow-spin-reverse: slow-spin 24s linear infinite reverse;
-  --animate-orbiter-bob: orbiter-bob 3s var(--delay) ease-in-out infinite;
   --animate-orbit-pulse: orbit-pulse 5.5s ease-in-out infinite;
 
   @keyframes robot-hover {
@@ -152,16 +149,6 @@
   @keyframes slow-spin {
     to {
       transform: rotate(360deg);
-    }
-  }
-
-  @keyframes orbiter-bob {
-    0%,
-    100% {
-      margin-top: 0;
-    }
-    50% {
-      margin-top: -8px;
     }
   }
 

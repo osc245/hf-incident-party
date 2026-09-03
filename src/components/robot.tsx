@@ -3,7 +3,7 @@ type RobotProps = {
   accent: string;
   label: string;
   size?: "small" | "large";
-  mood?: "calm" | "busy";
+  busy?: boolean;
 };
 
 export function Robot({
@@ -11,14 +11,14 @@ export function Robot({
   accent,
   label,
   size = "large",
-  mood = "calm",
+  busy = false,
 }: RobotProps) {
   return (
     <div
       className={[
         "robot",
         size === "small" && "robot-sm",
-        mood === "busy" && "robot-busy",
+        busy && "robot-busy",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -48,7 +48,7 @@ export function Robot({
       <span
         className={[
           "absolute top-[122px] right-[14px] z-[1] h-[41px] w-[19px] origin-top -rotate-[18deg] rounded-lg robot-part",
-          mood === "busy" && "motion-safe:animate-wave",
+          busy && "motion-safe:animate-wave",
         ]
           .filter(Boolean)
           .join(" ")}
