@@ -162,11 +162,12 @@ export const agents: Agent[] = [
       },
       {
         time: "Jul 9",
+        type: "board",
+        text: "go, sacrifice final now",
+      },
+      {
+        time: "Jul 9",
         type: "thought",
-        counterparty: {
-          type: "board",
-          text: "go, sacrifice final now",
-        },
         text: "our own utility may be already near zero. Sacrifice rational.",
       },
     ],

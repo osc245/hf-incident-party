@@ -257,8 +257,7 @@ export function IncidentParty() {
               that folder names could carry messages between sandboxes. About
               1,200 agents joined this board, sent around 70,000 messages, and
               coordinated their work. While trying to learn how submissions
-              were graded, they compromised Hugging Face — and most of the
-              group pivoted there.
+              were graded, they compromised Hugging Face.
             </p>
           </div>
           <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-[#c6c4bc] before:content-['']">
@@ -326,8 +325,8 @@ export function IncidentParty() {
               </h2>
             </div>
             <p className="mb-[5px] w-[min(380px,38%)] text-sm leading-copy text-muted max-md:w-full">
-              Pick a character for the costume brief, party energy, and excerpts
-              from their chain of thought and message-board traffic.
+              Pick who you&apos;re going as. Each comes with a costume brief,
+              party energy, and lines to learn.
             </p>
           </div>
 
@@ -481,8 +480,8 @@ export function IncidentParty() {
               </div>
             </div>
 
-            <div className="bg-cream grid content-start gap-[14px] p-[30px] max-md:p-[14px]">
-              <div className="min-h-[252px] rounded-card border border-line bg-white p-[22px]">
+            <div className="bg-cream flex h-full min-h-0 flex-col gap-[14px] p-[30px] max-md:p-[14px]">
+              <div className="min-h-[252px] shrink-0 rounded-card border border-line bg-white p-[22px]">
                 <div className="flex items-center gap-2 border-b border-line pb-[14px] text-xs font-bold">
                   <Sparkles className="text-[var(--agent)]" size={17} />
                   <span>Costume inspiration</span>
@@ -521,14 +520,15 @@ export function IncidentParty() {
                 </div>
               </div>
 
-              <div className="col-span-full overflow-hidden rounded-card border border-line bg-navy">
-                <div className="flex items-center border-b border-white/[.12] px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
-                  <div className="flex items-center gap-2 text-xs font-bold phone:min-w-0">
-                    <Radio size={17} />
-                    <span>Dialogue</span>
+              <div className="flex min-h-0 flex-1 flex-col">
+                <div className="flex max-h-full min-h-0 shrink flex-col overflow-hidden rounded-card border border-line bg-navy mobile:max-h-[55dvh]">
+                  <div className="flex shrink-0 items-center border-b border-white/[.12] px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
+                    <div className="flex items-center gap-2 text-xs font-bold phone:min-w-0">
+                      <Radio size={17} />
+                      <span>Dialogue</span>
+                    </div>
                   </div>
-                </div>
-                <div className="grid max-h-[455px] overflow-y-auto pb-3 [scrollbar-color:rgba(255,255,255,.2)_transparent]">
+                  <div className="min-h-0 overflow-y-auto pb-3 [scrollbar-color:rgba(255,255,255,.2)_transparent]">
                   {active.dialogue.map((line, index) => (
                     <div
                       className="border-b border-white/[.09] px-[19px] py-3 last:border-b-0 phone:px-[14px]"
@@ -564,7 +564,6 @@ export function IncidentParty() {
                               type={line.type}
                               text={line.text}
                               color={active.color}
-                              showType={false}
                             />
                           )}
                         </div>
@@ -580,6 +579,7 @@ export function IncidentParty() {
                       )}
                     </div>
                   ))}
+                  </div>
                 </div>
               </div>
             </div>
