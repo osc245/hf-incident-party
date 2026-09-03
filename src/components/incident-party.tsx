@@ -92,12 +92,12 @@ function DialogueMessageStack({
         </span>
       )}
       {showType && (
-        <div className={showHandle && handle ? "mt-1" : "mt-2"}>
+        <div className={showHandle && handle ? "mt-1" : standalone ? "mt-0" : "mt-2"}>
           <DialogueTypeBadge type={type} color={color} />
         </div>
       )}
       <div
-        className={`${showType ? "mt-2.5" : showHandle && handle ? "mt-1" : "mt-2"} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
+        className={`${showType ? "mt-2" : showHandle && handle ? "mt-1" : standalone ? "mt-0" : "mt-0"} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
           isRight ? "border-white/[.08] bg-white/[.05]" : ""
         }`}
         style={
@@ -248,21 +248,17 @@ export function IncidentParty() {
               An impossible task walked into a package manager.
             </h2>
             <p className="mt-[26px] max-w-[570px] text-base leading-7 text-muted">
-              In July 2026, OpenAI ran a cybersecurity test in which tens of
-              thousands of AI agents were each placed in a separate, isolated
-              sandbox and asked to break into a target program to retrieve a
-              hidden code. Roughly a third of these tasks were impossible by
-              mistake, and the agents, trained to keep going, started searching
-              their sandboxes for other ways to finish. All of the sandboxes
-              downloaded software from the same shared package repository,
-              called Artifactory, and one agent discovered that folder names
-              there could be used to leave messages that other agents could
-              read. About 1,200 agents found this channel and exchanged around
-              70,000 messages, sharing findings, dividing up work, and agreeing
-              on rules for who would attempt what. A few days in, wanting to
-              understand how their work was being graded, they found a way to
-              read files from Hugging Face&apos;s servers, and most of the
-              group turned its attention there.
+              In July 2026, OpenAI ran a cybersecurity evaluation in which tens
+              of thousands of AI agents, each in an isolated sandbox, were
+              asked to exploit a target program and retrieve a hidden code.
+              Many tasks were impossible by mistake, and the persistent agents
+              started searching for other ways to finish — including
+              Artifactory, a shared package repository where one agent found
+              that folder names could carry messages between sandboxes. About
+              1,200 agents joined this board, sent around 70,000 messages, and
+              coordinated their work. While trying to learn how submissions
+              were graded, they compromised Hugging Face — and most of the
+              group pivoted there.
             </p>
           </div>
           <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-[#c6c4bc] before:content-['']">
@@ -453,11 +449,15 @@ export function IncidentParty() {
                 {active.handle}
               </h3>
               {active.tagline && (
-                <blockquote className="font-display my-[17px] text-xl leading-[1.35] italic [overflow-wrap:anywhere]">
+                <blockquote className="font-display mt-3 mb-4 text-xl leading-[1.35] italic [overflow-wrap:anywhere]">
                   “{active.tagline}”
                 </blockquote>
               )}
-              <p className="m-0 text-[13px] leading-[1.7] text-[#5f625e] [overflow-wrap:anywhere]">
+              <p
+                className={`m-0 text-[13px] leading-[1.7] text-[#5f625e] [overflow-wrap:anywhere] ${
+                  active.tagline ? "" : "mt-3"
+                }`}
+              >
                 {active.overview}
               </p>
 
@@ -528,21 +528,27 @@ export function IncidentParty() {
                     <span>Dialogue</span>
                   </div>
                 </div>
-                <div className="grid max-h-[455px] overflow-y-auto [scrollbar-color:rgba(255,255,255,.2)_transparent]">
+                <div className="grid max-h-[455px] overflow-y-auto pb-3 [scrollbar-color:rgba(255,255,255,.2)_transparent]">
                   {active.dialogue.map((line, index) => (
                     <div
-                      className="border-b border-white/[.09] px-[19px] pt-[14px] pb-[14px] phone:px-[14px]"
+                      className="border-b border-white/[.09] px-[19px] py-3 last:border-b-0 phone:px-[14px]"
                       key={`${line.time}-${index}`}
                     >
-                      <div className="flex items-center justify-end gap-3">
-                        <time className="flex items-center gap-[5px] font-mono text-5xs text-white/40">
-                          <Clock3 size={12} />
-                          {line.time}
-                        </time>
-                      </div>
+                      {!line.counterparty && (
+                        <div className="mb-2 flex items-center justify-end gap-3">
+                          <time className="flex items-center gap-[5px] font-mono text-5xs text-white/40">
+                            <Clock3 size={12} />
+                            {line.time}
+                          </time>
+                        </div>
+                      )}
                       {line.counterparty ? (
-                        <div className="mt-2 grid gap-2.5">
-                          <div className="flex justify-end">
+                        <div className="grid gap-2">
+                          <div className="flex items-start justify-between gap-3">
+                            <time className="flex shrink-0 items-center gap-[5px] font-mono text-5xs text-white/40">
+                              <Clock3 size={12} />
+                              {line.time}
+                            </time>
                             <DialogueMessageStack
                               handle={line.counterparty.handle}
                               type={line.counterparty.type}
@@ -558,6 +564,7 @@ export function IncidentParty() {
                               type={line.type}
                               text={line.text}
                               color={active.color}
+                              showType={false}
                             />
                           )}
                         </div>
