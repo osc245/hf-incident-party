@@ -9,3 +9,9 @@ const result = await Bun.build({
   minify: true,
   plugins: [tailwind],
 });
+
+if (!result.success) {
+  console.error(result.logs);
+  process.exit(1);
+}
+

@@ -8,6 +8,26 @@
   --color-navy: #181a2d;
   --color-lime: #d9f36f;
   --color-line: rgba(22, 24, 36, 0.14);
+  --color-outline: #151720;
+  --color-cast-tab: #eeeae2;
+  --color-agent-panel: #f7f4ec;
+  --color-agent-sidebar: #ebe7de;
+  --color-swarm: #dce6da;
+  --color-chip-bg: #1a1d31d1;
+  --color-marquee-bg: #0a0b1557;
+  --color-timeline-line: #c6c4bc;
+  --color-label: #777971;
+  --color-label-light: #858780;
+  --color-label-muted: #85877f;
+  --color-body-muted: #5f625e;
+  --color-body-secondary: #555a59;
+  --color-body-tertiary: #616761;
+  --color-body-swarm: #626963;
+  --color-tab-inactive: #8c8c88;
+  --color-robot-screen: #dfe7dc;
+  --color-accent-pink: #ffb5e8;
+  --color-accent-gold: #ffdf6e;
+  --color-border-subtle: #16182429;
 
   --font-sans: "Avenir Next", "Segoe UI", Arial, sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -31,6 +51,9 @@
   --text-3xs: 10px;
   --text-4xs: 10px;
   --text-5xs: 10px;
+  --text-body-sm: 13px;
+  --text-body: 15px;
+  --text-lead: 17px;
 
   --font-weight-kicker: 650;
   --font-weight-strong: 750;
@@ -45,6 +68,9 @@
   --shadow-chip: 0 8px 24px rgba(0, 0, 0, 0.16);
   --shadow-orbit: 0 18px 40px rgba(22, 24, 36, 0.18);
   --shadow-orbiter: 0 5px 18px rgba(22, 24, 36, 0.08);
+
+  --duration-fast: 160ms;
+  --duration-normal: 180ms;
 
   --animate-robot-hover: robot-hover 3.2s ease-in-out infinite;
   --animate-wave: wave 2.2s ease-in-out infinite;
@@ -172,6 +198,214 @@
   }
 }
 
+@custom-variant motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    @slot;
+  }
+}
+
+@utility shell {
+  margin-inline: auto;
+  width: min(1180px, calc(100% - 48px));
+
+  @variant mobile {
+    width: min(calc(100% - 28px), 600px);
+  }
+}
+
+@utility section-y {
+  padding-block: 7rem;
+
+  @variant mobile {
+    padding-block: 76px;
+  }
+
+  @variant phone {
+    padding-block: 4rem;
+  }
+}
+
+@utility section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 50px;
+  margin-bottom: 52px;
+
+  @variant mobile {
+    display: grid;
+    gap: 18px;
+  }
+}
+
+@utility section-intro-text {
+  margin-bottom: 5px;
+  width: min(380px, 38%);
+  font-size: var(--text-body);
+  line-height: var(--leading-copy);
+  color: var(--color-muted);
+
+  @variant mobile {
+    width: 100%;
+  }
+}
+
+@utility mono-caps {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+@utility label-kicker {
+  display: block;
+  margin-bottom: 7px;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-caps);
+  color: var(--color-label);
+  text-transform: uppercase;
+}
+
+@utility break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+@utility btn-primary {
+  display: inline-flex;
+  min-height: 47px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: var(--radius-button);
+  background-color: var(--color-lime);
+  padding-inline: 19px;
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  transition:
+    transform var(--duration-normal),
+    background-color var(--duration-normal);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  @variant mobile {
+    width: min(100%, 300px);
+  }
+}
+
+@utility btn-ghost {
+  display: inline-flex;
+  min-height: 47px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: var(--radius-button);
+  border: 1px solid rgb(255 255 255 / 0.17);
+  background-color: rgb(255 255 255 / 0.05);
+  padding-inline: 19px;
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  color: rgb(255 255 255 / 0.83);
+  transition:
+    transform var(--duration-normal),
+    background-color var(--duration-normal);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  @variant mobile {
+    width: min(100%, 300px);
+  }
+}
+
+@utility hero-chip {
+  position: absolute;
+  z-index: 3;
+  animation: var(--animate-float);
+  border-radius: var(--radius-chip);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  background-color: var(--color-chip-bg);
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-chip);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@utility timeline-step {
+  z-index: 1;
+  display: grid;
+  width: 37px;
+  height: 37px;
+  place-items: center;
+  border-radius: 9999px;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+}
+
+@utility nav-circle-btn {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  place-items: center;
+  border-radius: 9999px;
+  border: 1px solid var(--color-line);
+  background-color: rgb(255 255 255 / 0.42);
+  padding: 0;
+  transition:
+    background-color var(--duration-fast),
+    transform var(--duration-fast);
+
+  &:hover {
+    transform: scale(1.05);
+    background-color: white;
+  }
+}
+
+@utility robot-stroke {
+  border-width: 3px;
+  border-style: solid;
+  border-color: var(--color-outline);
+}
+
+@utility bg-agent-42 {
+  background: color-mix(in srgb, var(--agent) 42%, transparent);
+}
+
+@utility bg-agent-38 {
+  background: color-mix(in srgb, var(--agent) 38%, transparent);
+}
+
+@utility border-agent-55 {
+  border-color: color-mix(in srgb, var(--agent) 55%, transparent);
+}
+
+@utility bg-agent-accent-prop {
+  background: color-mix(in srgb, var(--agent-accent) 36%, white);
+}
+
+@utility bg-agent-sidebar {
+  background:
+    radial-gradient(
+      circle at 50% 26%,
+      color-mix(in srgb, var(--agent-accent) 30%, transparent),
+      transparent 22%
+    ),
+    var(--color-agent-sidebar);
+}
+
 @utility bg-hero {
   background-image:
     radial-gradient(
@@ -192,14 +426,6 @@
     rgba(0, 0, 0, 0.45),
     transparent 68%
   );
-}
-
-@utility w-shell {
-  width: min(1180px, calc(100% - 48px));
-}
-
-@utility w-shell-mobile {
-  width: min(calc(100% - 28px), 600px);
 }
 
 @utility grid-cols-briefing {

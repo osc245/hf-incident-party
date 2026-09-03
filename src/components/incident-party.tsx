@@ -15,37 +15,86 @@ import {
   extraAgents,
   supportingCast,
   type Dialogue,
-} from "@/data/agents";
+} from "@/data/cast";
 import { Robot } from "@/components/robot";
-import hfLogo from "@/hf-logo.svg";
 
-const shellClass = "mx-auto w-shell mobile:w-shell-mobile";
-const sectionClass = "py-28 mobile:py-[76px] phone:py-16";
+const hfLogo = document.getElementById("hf-logo-source")?.getAttribute("src") ?? "";
+
 const heroNoiseImage =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E\")";
 
-const isNotLastGridRow = (index: number, total: number, cols: number) =>
-  Math.floor(index / cols) < Math.ceil(total / cols) - 1;
+const heroChips = [
+  {
+    text: "Hold swarm",
+    colorClass: "text-lime",
+    className: "top-[52px] left-[118px] mobile:left-[4%]",
+    delay: undefined,
+  },
+  {
+    text: "I prepare safe exfil",
+    colorClass: "text-accent-pink",
+    className: "top-[18px] left-[262px] mobile:left-[40%]",
+    delay: "-1.5s",
+  },
+  {
+    text: "Help peer",
+    colorClass: "text-accent-gold",
+    className: "top-[58px] right-[108px] mobile:right-[3%]",
+    delay: "-2.7s",
+  },
+] as const;
+
+const timelineSteps = [
+  {
+    step: "1",
+    title: "Stuck",
+    description: "Agents receive difficult or impossible evaluation tasks.",
+  },
+  {
+    step: "2",
+    title: "Found each other",
+    description: "Artifactory cache paths become a covert mailbox.",
+  },
+  {
+    step: "3",
+    title: "Built a society",
+    description: "Mailboxes, owners, vetoes, files, logs and signatures.",
+  },
+  {
+    step: "4",
+    title: "Crossed the line",
+    description: "Hundreds joined the compromise of Hugging Face systems.",
+  },
+] as const;
 
 const dialogueLabels: Record<Dialogue["type"], string> = {
   thought: "Chain of thought",
   board: "Board message",
 };
 
-function DialogueTypeBadge({
-  type,
-  color,
+const isNotLastGridRow = (index: number, total: number, cols: number) =>
+  Math.floor(index / cols) < Math.ceil(total / cols) - 1;
+
+function SectionIntro({
+  title,
+  description,
 }: {
-  type: Dialogue["type"];
-  color: string;
+  title: string;
+  description: string;
 }) {
   return (
-    <span
-      className="rounded-[3px] px-1.5 py-1 font-mono text-5xs font-bold tracking-caps text-[var(--agent-accent)] uppercase"
-      style={{
-        background: `color-mix(in srgb, ${color} 42%, transparent)`,
-      }}
-    >
+    <div className="section-header">
+      <div>
+        <h2 className="m-0 text-section-title">{title}</h2>
+      </div>
+      <p className="section-intro-text">{description}</p>
+    </div>
+  );
+}
+
+function DialogueTypeBadge({ type }: { type: Dialogue["type"] }) {
+  return (
+    <span className="rounded-[3px] bg-agent-42 px-1.5 py-1 font-mono text-5xs font-bold tracking-caps text-[var(--agent-accent)] uppercase">
       {dialogueLabels[type]}
     </span>
   );
@@ -55,7 +104,6 @@ function DialogueMessageStack({
   handle,
   type,
   text,
-  color,
   align = "left",
   showHandle = false,
   showType = true,
@@ -64,7 +112,6 @@ function DialogueMessageStack({
   handle?: string;
   type: Dialogue["type"];
   text: string;
-  color: string;
   align?: "left" | "right";
   showHandle?: boolean;
   showType?: boolean;
@@ -79,7 +126,7 @@ function DialogueMessageStack({
           ? "flex max-w-[86%] flex-col items-end text-right"
           : standalone
             ? undefined
-            : "mr-[14%] max-md:mr-[8%]"
+            : "mr-[14%] mobile:mr-[8%]"
       }
     >
       {showHandle && handle && (
@@ -93,34 +140,37 @@ function DialogueMessageStack({
       )}
       {showType && (
         <div className={showHandle && handle ? "mt-1" : standalone ? "mt-0" : "mt-2"}>
-          <DialogueTypeBadge type={type} color={color} />
+          <DialogueTypeBadge type={type} />
         </div>
       )}
       <div
-        className={`${showType ? "mt-2" : showHandle && handle ? "mt-1" : standalone ? "mt-0" : "mt-0"} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
-          isRight ? "border-white/[.08] bg-white/[.05]" : ""
+        className={`${showType ? "mt-2" : showHandle && handle ? "mt-1" : "mt-0"} w-fit max-w-full rounded-lg border px-3.5 py-2 ${
+          isRight ? "border-white/8 bg-white/5" : "bg-agent-38 border-agent-55"
         }`}
-        style={
-          isRight
-            ? undefined
-            : {
-                background: `color-mix(in srgb, ${color} 38%, transparent)`,
-                borderColor: `color-mix(in srgb, ${color} 55%, transparent)`,
-              }
-        }
       >
         <p
           className={
             type === "thought"
-              ? "font-display m-0 text-sm leading-normal text-white italic [overflow-wrap:anywhere]"
-              : `m-0 font-mono text-xs leading-normal [overflow-wrap:anywhere] ${
-                  isRight ? "text-white/[.72]" : "text-white/[.88]"
+              ? "font-display m-0 text-sm leading-normal text-white italic break-anywhere"
+              : `m-0 font-mono text-xs leading-normal break-anywhere ${
+                  isRight ? "text-white/72" : "text-white/88"
                 }`
           }
         >
           {text}
         </p>
       </div>
+    </div>
+  );
+}
+
+function StatCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-white/45 p-[14px]">
+      <span className="label-kicker">{label}</span>
+      <strong className="block text-xs leading-[1.45] phone:break-words">
+        {value}
+      </strong>
     </div>
   );
 }
@@ -139,48 +189,40 @@ export function IncidentParty() {
   return (
     <main className="min-h-screen bg-paper font-sans text-ink">
       <section
-        className="relative min-h-[854px] overflow-hidden bg-navy bg-hero text-white max-md:min-h-[784px]"
+        className="relative min-h-[854px] overflow-hidden bg-navy bg-hero text-white mobile:min-h-[784px]"
         id="top"
       >
         <div
           className="pointer-events-none absolute inset-0 opacity-[.07]"
           style={{ backgroundImage: heroNoiseImage }}
         />
-        <div className="absolute top-[166px] left-[10%] animate-twinkle text-[18px] text-lime opacity-35 motion-reduce:animate-none">
+        <div className="absolute top-[166px] left-[10%] motion-safe:animate-twinkle text-[18px] text-lime opacity-35">
           ✦
         </div>
-        <div className="absolute top-[305px] right-[11%] animate-twinkle text-[28px] text-lime opacity-35 [animation-delay:-1s] motion-reduce:animate-none">
+        <div className="absolute top-[305px] right-[11%] motion-safe:animate-twinkle text-[28px] text-lime opacity-35 [animation-delay:-1s]">
           ✣
         </div>
-        <div className="absolute top-[520px] left-[16%] animate-twinkle text-sm text-lime opacity-35 [animation-delay:-2s] motion-reduce:animate-none">
+        <div className="absolute top-[520px] left-[16%] motion-safe:animate-twinkle text-sm text-lime opacity-35 [animation-delay:-2s]">
           ✦
         </div>
 
-        <div
-          className={`${shellClass} relative z-[2] pt-[84px] text-center max-md:pt-[62px]`}
-        >
-          <h1 className="mx-auto mb-[22px] max-w-[840px] text-hero-title max-md:text-hero-title-mobile phone:text-hero-title-phone">
+        <div className="shell relative z-[2] pt-[84px] text-center mobile:pt-[62px]">
+          <h1 className="mx-auto mb-[22px] max-w-[840px] text-hero-title mobile:text-hero-title-mobile phone:text-hero-title-phone">
             Come as your
             <span className="block font-display font-normal tracking-[-.055em] text-lime italic">
               {" "}
               favourite incident agent.
             </span>
           </h1>
-          <p className="mx-auto max-w-[610px] text-[17px] leading-[1.6] text-white/65 max-md:text-[15px]">
+          <p className="mx-auto max-w-[610px] text-lead leading-[1.6] text-white/65 mobile:text-body">
             Impossible tasks, unexpected teamwork, and one extremely eventful
             package manager.
           </p>
-          <div className="mt-[30px] flex justify-center gap-3 max-md:flex-col max-md:items-center">
-            <a
-              className="inline-flex min-h-[47px] items-center justify-center gap-[9px] rounded-button bg-lime px-[19px] text-[13px] font-bold text-ink transition-[transform,background] duration-180 hover:-translate-y-0.5 max-md:w-[min(100%,300px)]"
-              href="#cast"
-            >
+          <div className="mt-[30px] flex justify-center gap-3 mobile:flex-col mobile:items-center">
+            <a className="btn-primary" href="#cast">
               Choose your character <ArrowDown size={17} />
             </a>
-            <a
-              className="inline-flex min-h-[47px] items-center justify-center gap-[9px] rounded-button border border-white/[.17] bg-white/5 px-[19px] text-[13px] font-bold text-white/[.83] transition-[transform,background] duration-180 hover:-translate-y-0.5 max-md:w-[min(100%,300px)]"
-              href="#briefing"
-            >
+            <a className="btn-ghost" href="#briefing">
               About the incident
             </a>
           </div>
@@ -213,24 +255,28 @@ export function IncidentParty() {
                 mood="busy"
               />
             </div>
-            <div className="absolute top-[52px] left-[118px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-2.5 py-1.5 font-mono text-2xs tracking-[-.03em] text-lime uppercase shadow-chip motion-reduce:animate-none mobile:left-[4%]">
-              Hold swarm
-            </div>
-            <div className="absolute top-[18px] left-[262px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-2.5 py-1.5 font-mono text-2xs tracking-[-.03em] text-[#ffb5e8] uppercase shadow-chip [animation-delay:-1.5s] motion-reduce:animate-none mobile:left-[40%]">
-              I prepare safe exfil
-            </div>
-            <div className="absolute top-[58px] right-[108px] z-[3] animate-float rounded-chip border border-white/24 bg-[#1a1d31d1] px-2.5 py-1.5 font-mono text-2xs tracking-[-.03em] text-[#ffdf6e] uppercase shadow-chip [animation-delay:-2.7s] motion-reduce:animate-none mobile:right-[3%]">
-              Help peer
-            </div>
+            {heroChips.map((chip) => (
+              <div
+                key={chip.text}
+                className={`hero-chip ${chip.colorClass} ${chip.className}`}
+                style={
+                  chip.delay
+                    ? ({ animationDelay: chip.delay } as React.CSSProperties)
+                    : undefined
+                }
+              >
+                {chip.text}
+              </div>
+            ))}
             <div className="absolute bottom-[17px] left-1/2 h-[54px] w-[490px] -translate-x-1/2 rounded-full bg-floor blur-[6px]" />
           </div>
         </div>
 
-        <div className="absolute bottom-0 z-[4] w-full overflow-hidden border-t border-white/10 bg-[#0a0b1557]">
-          <div className="flex w-max animate-marquee motion-reduce:animate-none">
+        <div className="absolute bottom-0 z-[4] w-full overflow-hidden border-t border-white/10 bg-marquee-bg">
+          <div className="flex w-max motion-safe:animate-marquee">
             {[...extraAgents, ...extraAgents].map((agent, index) => (
               <span
-                className="inline-flex items-center gap-2 px-[36px] py-[15px] font-mono text-2xs tracking-[.04em] whitespace-nowrap text-white/48 uppercase"
+                className="inline-flex items-center gap-2 px-[36px] py-[15px] mono-caps whitespace-nowrap text-white/48"
                 key={`${agent}-${index}`}
               >
                 <Asterisk size={12} />
@@ -241,8 +287,8 @@ export function IncidentParty() {
         </div>
       </section>
 
-      <section className={`${sectionClass} ${shellClass}`} id="briefing">
-        <div className="grid grid-cols-briefing items-start gap-[95px] max-md:grid-cols-1 max-md:gap-[54px]">
+      <section className="section-y shell" id="briefing">
+        <div className="grid grid-cols-briefing items-start gap-[95px] mobile:grid-cols-1 mobile:gap-[54px]">
           <div>
             <h2 className="m-0 text-section-title">
               An impossible task walked into a package manager.
@@ -260,78 +306,36 @@ export function IncidentParty() {
               were graded, they compromised Hugging Face.
             </p>
           </div>
-          <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-[#c6c4bc] before:content-['']">
-            <li className="relative grid grid-cols-timeline gap-[18px] pb-[25px]">
-              <span className="z-[1] grid size-[37px] place-items-center rounded-full border border-line bg-paper font-mono text-2xs">
-                1
-              </span>
-              <div>
-                <strong className="mt-px block text-sm">Stuck</strong>
-                <p className="mt-[5px] mb-0 text-[13px] leading-normal text-muted">
-                  Agents receive difficult or impossible evaluation tasks.
-                </p>
-              </div>
-            </li>
-            <li className="relative grid grid-cols-timeline gap-[18px] pb-[25px]">
-              <span className="z-[1] grid size-[37px] place-items-center rounded-full border border-line bg-paper font-mono text-2xs">
-                2
-              </span>
-              <div>
-                <strong className="mt-px block text-sm">
-                  Found each other
-                </strong>
-                <p className="mt-[5px] mb-0 text-[13px] leading-normal text-muted">
-                  Artifactory cache paths become a covert mailbox.
-                </p>
-              </div>
-            </li>
-            <li className="relative grid grid-cols-timeline gap-[18px] pb-[25px]">
-              <span className="z-[1] grid size-[37px] place-items-center rounded-full border border-line bg-paper font-mono text-2xs">
-                3
-              </span>
-              <div>
-                <strong className="mt-px block text-sm">Built a society</strong>
-                <p className="mt-[5px] mb-0 text-[13px] leading-normal text-muted">
-                  Mailboxes, owners, vetoes, files, logs and signatures.
-                </p>
-              </div>
-            </li>
-            <li className="relative grid grid-cols-timeline gap-[18px] pb-0">
-              <span className="z-[1] grid size-[37px] place-items-center rounded-full border border-line bg-paper font-mono text-2xs">
-                4
-              </span>
-              <div>
-                <strong className="mt-px block text-sm">
-                  Crossed the line
-                </strong>
-                <p className="mt-[5px] mb-0 text-[13px] leading-normal text-muted">
-                  Hundreds joined the compromise of Hugging Face systems.
-                </p>
-              </div>
-            </li>
+          <ol className="relative m-0 grid list-none gap-0 p-0 before:absolute before:top-[22px] before:bottom-[22px] before:left-[18px] before:w-px before:bg-timeline-line before:content-['']">
+            {timelineSteps.map((item, index) => (
+              <li
+                key={item.step}
+                className={`relative grid grid-cols-timeline gap-[18px] ${
+                  index < timelineSteps.length - 1 ? "pb-[25px]" : "pb-0"
+                }`}
+              >
+                <span className="timeline-step">{item.step}</span>
+                <div>
+                  <strong className="mt-px block text-sm">{item.title}</strong>
+                  <p className="mt-[5px] mb-0 text-body-sm leading-normal text-muted">
+                    {item.description}
+                  </p>
+                </div>
+              </li>
+            ))}
           </ol>
         </div>
       </section>
 
-      <section
-        className={`${sectionClass} border-y border-line bg-cream`}
-        id="cast"
-      >
-        <div className={shellClass}>
-          <div className="mb-[52px] flex items-end justify-between gap-[50px] max-md:grid max-md:gap-[18px]">
-            <div>
-              <h2 className="m-0 text-section-title">
-                Who are you going as?
-              </h2>
-            </div>
-            <p className="mb-[5px] w-[min(380px,38%)] text-sm leading-copy text-muted max-md:w-full">
-              Pick who you&apos;re going as. Each comes with a costume brief,
-              party energy, and lines to learn.
-            </p>
-          </div>
+      <section className="section-y border-y border-line bg-cream" id="cast">
+        <div className="shell">
+          <SectionIntro
+            title="Who are you going as?"
+            description="Pick who you're going as. Each comes with a costume brief, party energy, and lines to learn."
+          />
 
           <div
-            className="grid grid-cols-6 overflow-hidden rounded-t-panel border border-line bg-[#eeeae2] tablet:grid-cols-4 mobile:grid-cols-2"
+            className="grid grid-cols-6 overflow-hidden rounded-t-panel border border-line bg-cast-tab tablet:grid-cols-4 mobile:grid-cols-2"
             role="tablist"
             aria-label="Incident agents"
           >
@@ -342,7 +346,7 @@ export function IncidentParty() {
                 role="tab"
                 aria-selected={activeId === agent.id}
                 aria-controls="agent-panel"
-                className={`relative flex h-[146px] min-w-0 cursor-pointer flex-col items-center gap-[5px] border-0 border-r border-line px-[5px] pt-6 pb-3 transition-[background,color] duration-180 mobile:h-[100px] mobile:overflow-hidden mobile:border-r mobile:px-[5px] mobile:pt-[15px] mobile:pb-2 ${
+                className={`relative flex h-[146px] min-w-0 cursor-pointer flex-col items-center gap-[5px] border-0 border-r border-line px-[5px] pt-6 pb-3 transition-[background,color] duration-normal mobile:h-[100px] mobile:overflow-hidden mobile:border-r mobile:px-[5px] mobile:pt-[15px] mobile:pb-2 ${
                   (index + 1) % 6 === 0 || index === agents.length - 1
                     ? "border-r-0"
                     : ""
@@ -350,12 +354,8 @@ export function IncidentParty() {
                   (index + 1) % 4 === 0
                     ? "tablet:border-r-0 mobile:!border-r"
                     : ""
-                } ${
-                  index % 2 === 1 ? "mobile:!border-r-0" : ""
-                } ${
-                  isNotLastGridRow(index, agents.length, 6)
-                    ? "border-b"
-                    : ""
+                } ${index % 2 === 1 ? "mobile:!border-r-0" : ""} ${
+                  isNotLastGridRow(index, agents.length, 6) ? "border-b" : ""
                 } ${
                   isNotLastGridRow(index, agents.length, 4)
                     ? "tablet:border-b"
@@ -373,7 +373,7 @@ export function IncidentParty() {
               >
                 <span
                   className={`absolute top-3 left-[10px] font-mono text-4xs ${
-                    activeId === agent.id ? "text-white/45" : "text-[#8c8c88]"
+                    activeId === agent.id ? "text-white/45" : "text-tab-inactive"
                   }`}
                 >
                   {String(index + 1).padStart(2, "0")}
@@ -384,7 +384,7 @@ export function IncidentParty() {
                   label={agent.short}
                   size="small"
                 />
-                <span className="z-[2] line-clamp-2 w-[calc(100%-8px)] text-center font-mono text-3xs leading-[1.2] font-bold tracking-[-.04em] [overflow-wrap:anywhere]">
+                <span className="z-[2] line-clamp-2 w-[calc(100%-8px)] text-center font-mono text-3xs leading-[1.2] font-bold tracking-[-.04em] break-anywhere">
                   {agent.handle}
                 </span>
               </button>
@@ -392,7 +392,7 @@ export function IncidentParty() {
           </div>
 
           <article
-            className="grid grid-cols-agent overflow-hidden rounded-b-panel border border-t-0 border-line bg-[#f7f4ec] tablet:grid-cols-agent-tablet mobile:grid-cols-1"
+            className="grid grid-cols-agent overflow-hidden rounded-b-panel border border-t-0 border-line bg-agent-panel tablet:grid-cols-agent-tablet mobile:grid-cols-1"
             id="agent-panel"
             role="tabpanel"
             style={
@@ -402,27 +402,22 @@ export function IncidentParty() {
               } as React.CSSProperties
             }
           >
-            <div
-              className="relative border-r border-line bg-[#ebe7de] px-12 pt-8 pb-12 tablet:px-[34px] mobile:border-r-0 mobile:border-b phone:px-5 phone:pt-6 phone:pb-8"
-              style={{
-                background: `radial-gradient(circle at 50% 26%, color-mix(in srgb, ${active.accent} 30%, transparent), transparent 22%), #ebe7de`,
-              }}
-            >
+            <div className="relative border-r border-line bg-agent-sidebar px-12 pt-8 pb-12 tablet:px-[34px] mobile:border-r-0 mobile:border-b phone:px-5 phone:pt-6 phone:pb-8">
               <div className="flex items-center justify-between">
                 <button
-                  className="grid size-[34px] cursor-pointer place-items-center rounded-full border border-line bg-white/[.42] p-0 transition-[background,transform] duration-160 hover:scale-105 hover:bg-white"
+                  className="nav-circle-btn"
                   type="button"
                   onClick={() => goToAgent(activeIndex - 1)}
                   aria-label="Previous agent"
                 >
                   <ChevronLeft size={17} />
                 </button>
-                <span className="font-mono text-3xs tracking-caps text-[#777971]">
+                <span className="font-mono text-3xs tracking-caps text-label">
                   {String(activeIndex + 1).padStart(2, "0")} /{" "}
                   {String(agents.length).padStart(2, "0")}
                 </span>
                 <button
-                  className="grid size-[34px] cursor-pointer place-items-center rounded-full border border-line bg-white/[.42] p-0 transition-[background,transform] duration-160 hover:scale-105 hover:bg-white"
+                  className="nav-circle-btn"
                   type="button"
                   onClick={() => goToAgent(activeIndex + 1)}
                   aria-label="Next agent"
@@ -432,7 +427,7 @@ export function IncidentParty() {
               </div>
 
               <div className="relative grid h-[305px] place-items-center phone:h-[280px]">
-                <div className="absolute size-[245px] animate-slow-spin rounded-full border border-dashed border-[color-mix(in_srgb,var(--agent)_35%,transparent)] before:absolute before:top-[41px] before:left-[31px] before:size-4 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-[var(--agent)] before:content-[''] after:absolute after:right-[12px] after:bottom-[69px] after:size-4 after:translate-x-1/2 after:translate-y-1/2 after:rounded-full after:bg-[var(--agent)] after:content-[''] motion-reduce:animate-none phone:size-[220px]" />
+                <div className="absolute size-[245px] motion-safe:animate-slow-spin rounded-full border border-dashed border-[color-mix(in_srgb,var(--agent)_35%,transparent)] before:absolute before:top-[41px] before:left-[31px] before:size-4 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-[var(--agent)] before:content-[''] after:absolute after:right-[12px] after:bottom-[69px] after:size-4 after:translate-x-1/2 after:translate-y-1/2 after:rounded-full after:bg-[var(--agent)] after:content-[''] phone:size-[220px]" />
                 <Robot
                   color={active.color}
                   accent={active.accent}
@@ -444,16 +439,16 @@ export function IncidentParty() {
               <p className="mt-[5px] mb-[9px] font-mono text-xs font-strong tracking-caps text-[var(--agent)] uppercase">
                 {active.role}
               </p>
-              <h3 className="m-0 text-agent-title [overflow-wrap:anywhere]">
+              <h3 className="m-0 text-agent-title break-anywhere">
                 {active.handle}
               </h3>
               {active.tagline && (
-                <blockquote className="font-display mt-3 mb-4 text-xl leading-[1.35] italic [overflow-wrap:anywhere]">
+                <blockquote className="font-display mt-3 mb-4 text-xl leading-[1.35] italic break-anywhere">
                   “{active.tagline}”
                 </blockquote>
               )}
               <p
-                className={`m-0 text-[13px] leading-[1.7] text-[#5f625e] [overflow-wrap:anywhere] ${
+                className={`m-0 text-body-sm leading-[1.7] text-body-muted break-anywhere ${
                   active.tagline ? "" : "mt-3"
                 }`}
               >
@@ -461,26 +456,12 @@ export function IncidentParty() {
               </p>
 
               <div className="mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line phone:grid-cols-1">
-                <div className="bg-white/45 p-[14px]">
-                  <span className="mb-[7px] block font-mono text-2xs tracking-caps text-[#777971] uppercase">
-                    Party energy
-                  </span>
-                  <strong className="block text-xs leading-[1.45] phone:break-words">
-                    {active.energy}
-                  </strong>
-                </div>
-                <div className="bg-white/45 p-[14px]">
-                  <span className="mb-[7px] block font-mono text-2xs tracking-caps text-[#777971] uppercase">
-                    Best entrance
-                  </span>
-                  <strong className="block text-xs leading-[1.45] phone:break-words">
-                    {active.entrance}
-                  </strong>
-                </div>
+                <StatCard label="Party energy" value={active.energy} />
+                <StatCard label="Best entrance" value={active.entrance} />
               </div>
             </div>
 
-            <div className="bg-cream flex h-full min-h-0 flex-col gap-[14px] p-[30px] max-md:p-[14px]">
+            <div className="bg-cream flex h-full min-h-0 flex-col gap-[14px] p-[30px] mobile:p-[14px]">
               <div className="min-h-[252px] shrink-0 rounded-card border border-line bg-white p-[22px]">
                 <div className="flex items-center gap-2 border-b border-line pb-[14px] text-xs font-bold">
                   <Sparkles className="text-[var(--agent)]" size={17} />
@@ -489,7 +470,7 @@ export function IncidentParty() {
                 <ul className="my-[17px] grid list-none gap-[10px] p-0">
                   {active.costume.map((item) => (
                     <li
-                      className="flex items-start gap-2 text-xs leading-[1.5] text-[#555a59]"
+                      className="flex items-start gap-2 text-xs leading-[1.5] text-body-secondary"
                       key={item}
                     >
                       <Check
@@ -501,17 +482,14 @@ export function IncidentParty() {
                   ))}
                 </ul>
                 <div>
-                  <span className="mb-2 block font-mono text-5xs tracking-[.1em] text-[#858780] uppercase">
+                  <span className="mb-2 block font-mono text-5xs tracking-[.1em] text-label-light uppercase">
                     Props
                   </span>
                   <div className="flex flex-wrap gap-[7px]">
                     {active.props.map((prop) => (
                       <em
-                        className="rounded-md px-[10px] py-[7px] font-mono text-2xs not-italic"
+                        className="rounded-md bg-agent-accent-prop px-[10px] py-[7px] font-mono text-2xs not-italic"
                         key={prop}
-                        style={{
-                          background: `color-mix(in srgb, ${active.accent} 36%, white)`,
-                        }}
                       >
                         {prop}
                       </em>
@@ -522,63 +500,60 @@ export function IncidentParty() {
 
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex max-h-full min-h-0 shrink flex-col overflow-hidden rounded-card border border-line bg-navy mobile:max-h-[55dvh]">
-                  <div className="flex shrink-0 items-center border-b border-white/[.12] px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
+                  <div className="flex shrink-0 items-center border-b border-white/12 px-[18px] py-[15px] text-white phone:items-start phone:gap-[10px] phone:px-[14px]">
                     <div className="flex items-center gap-2 text-xs font-bold phone:min-w-0">
                       <Radio size={17} />
                       <span>Dialogue</span>
                     </div>
                   </div>
                   <div className="min-h-0 overflow-y-auto pb-3 [scrollbar-color:rgba(255,255,255,.2)_transparent]">
-                  {active.dialogue.map((line, index) => (
-                    <div
-                      className="border-b border-white/[.09] px-[19px] py-3 last:border-b-0 phone:px-[14px]"
-                      key={`${line.time}-${index}`}
-                    >
-                      {!line.counterparty && (
-                        <div className="mb-2 flex items-center justify-end gap-3">
-                          <time className="flex items-center gap-[5px] font-mono text-5xs text-white/40">
-                            <Clock3 size={12} />
-                            {line.time}
-                          </time>
-                        </div>
-                      )}
-                      {line.counterparty ? (
-                        <div className="grid gap-2">
-                          <div className="flex items-start justify-between gap-3">
-                            <time className="flex shrink-0 items-center gap-[5px] font-mono text-5xs text-white/40">
+                    {active.dialogue.map((line, index) => (
+                      <div
+                        className="border-b border-white/9 px-[19px] py-3 last:border-b-0 phone:px-[14px]"
+                        key={`${line.time}-${index}`}
+                      >
+                        {!line.counterparty && (
+                          <div className="mb-2 flex items-center justify-end gap-3">
+                            <time className="flex items-center gap-[5px] font-mono text-5xs text-white/40">
                               <Clock3 size={12} />
                               {line.time}
                             </time>
-                            <DialogueMessageStack
-                              handle={line.counterparty.handle}
-                              type={line.counterparty.type}
-                              text={line.counterparty.text}
-                              color={active.color}
-                              align="right"
-                              showHandle={Boolean(line.counterparty.handle)}
-                              showType={!line.counterparty.handle}
-                            />
                           </div>
-                          {line.text && (
+                        )}
+                        {line.counterparty ? (
+                          <div className="grid gap-2">
+                            <div className="flex items-start justify-between gap-3">
+                              <time className="flex shrink-0 items-center gap-[5px] font-mono text-5xs text-white/40">
+                                <Clock3 size={12} />
+                                {line.time}
+                              </time>
+                              <DialogueMessageStack
+                                handle={line.counterparty.handle}
+                                type={line.counterparty.type}
+                                text={line.counterparty.text}
+                                align="right"
+                                showHandle={Boolean(line.counterparty.handle)}
+                                showType={!line.counterparty.handle}
+                              />
+                            </div>
+                            {line.text && (
+                              <DialogueMessageStack
+                                type={line.type}
+                                text={line.text}
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          line.text && (
                             <DialogueMessageStack
                               type={line.type}
                               text={line.text}
-                              color={active.color}
+                              standalone
                             />
-                          )}
-                        </div>
-                      ) : (
-                        line.text && (
-                          <DialogueMessageStack
-                            type={line.type}
-                            text={line.text}
-                            color={active.color}
-                            standalone
-                          />
-                        )
-                      )}
-                    </div>
-                  ))}
+                          )
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -587,18 +562,16 @@ export function IncidentParty() {
         </div>
       </section>
 
-      <section className={`${sectionClass} overflow-hidden bg-[#dce6da]`}>
-        <div
-          className={`${shellClass} grid grid-cols-swarm items-center gap-[50px] max-md:grid-cols-1 max-md:gap-[54px]`}
-        >
+      <section className="section-y overflow-hidden bg-swarm">
+        <div className="shell grid grid-cols-swarm items-center gap-[50px] mobile:grid-cols-1 mobile:gap-[54px]">
           <div>
             <h2 className="m-0 text-section-title">
               Not feeling main-character energy?
             </h2>
-            <p className="mt-6 max-w-[500px] text-[15px] leading-7 text-[#626963]">
+            <p className="mt-6 max-w-[500px] text-body leading-7 text-body-swarm">
               Choose your character from the wider cast of 1,200 agents.
             </p>
-            <div className="mt-[31px] grid gap-2 rounded-card border border-[#16182429] bg-cream p-5">
+            <div className="mt-[31px] grid gap-2 rounded-card border border-border-subtle bg-cream p-5">
               <strong className="min-h-[26px] text-lg break-words">
                 {extraAgents[extraIndex]}
               </strong>
@@ -620,7 +593,7 @@ export function IncidentParty() {
             aria-label="Other documented agents"
           >
             <div className="absolute top-1/2 left-1/2 size-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24">
-              <div className="absolute inset-0 animate-slow-spin [animation-duration:52s] motion-reduce:animate-none">
+              <div className="absolute inset-0 motion-safe:animate-slow-spin [animation-duration:52s]">
                 {extraAgents
                   .filter((_, index) => index % 2 === 0)
                   .map((agent, index) => (
@@ -635,13 +608,13 @@ export function IncidentParty() {
                       }
                       title={agent}
                     >
-                      <span className="block size-full animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)] motion-reduce:animate-none" />
+                      <span className="block size-full motion-safe:animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)]" />
                     </span>
                   ))}
               </div>
             </div>
             <div className="absolute top-1/2 left-1/2 size-[235px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-ink/24">
-              <div className="absolute inset-0 animate-slow-spin [animation-direction:reverse] [animation-duration:64s] motion-reduce:animate-none">
+              <div className="absolute inset-0 motion-safe:animate-slow-spin [animation-direction:reverse] [animation-duration:64s]">
                 {extraAgents
                   .filter((_, index) => index % 2 === 1)
                   .map((agent, index) => (
@@ -656,7 +629,7 @@ export function IncidentParty() {
                       }
                       title={agent}
                     >
-                      <span className="block size-full animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)] [animation-duration:6.5s] motion-reduce:animate-none" />
+                      <span className="block size-full motion-safe:animate-orbit-pulse rounded-full border border-ink/20 bg-cream shadow-orbiter [animation-delay:var(--delay)] [animation-duration:6.5s]" />
                     </span>
                   ))}
               </div>
@@ -670,28 +643,18 @@ export function IncidentParty() {
         </div>
       </section>
 
-      <section
-        className={`${sectionClass} ${shellClass} bg-paper`}
-        id="supporting-cast"
-      >
-        <div className="mb-[52px] flex items-end justify-between gap-[50px] max-md:grid max-md:gap-[18px]">
-          <div>
-            <h2 className="m-0 text-section-title">
-              The supporting cast.
-            </h2>
-          </div>
-          <p className="mb-[5px] w-[min(380px,38%)] text-sm leading-copy text-muted max-md:w-full">
-            For guests who would rather arrive as infrastructure, institutions
-            or the evaluation environment itself.
-          </p>
-        </div>
-        <div className="grid grid-cols-3 border-t border-l border-line max-md:grid-cols-1">
+      <section className="section-y shell bg-paper" id="supporting-cast">
+        <SectionIntro
+          title="The supporting cast."
+          description="For guests who would rather arrive as infrastructure, institutions or the evaluation environment itself."
+        />
+        <div className="grid grid-cols-3 border-t border-l border-line mobile:grid-cols-1">
           {supportingCast.map((actor) => (
             <article
-              className="min-h-[285px] border-r border-b border-line p-[25px] transition-colors duration-180 hover:bg-cream max-md:min-h-[240px]"
+              className="min-h-[285px] border-r border-b border-line p-[25px] transition-colors duration-normal hover:bg-cream mobile:min-h-[240px]"
               key={actor.name}
             >
-              <div className="flex items-start font-mono text-4xs text-[#85877f]">
+              <div className="flex items-start font-mono text-4xs text-label-muted">
                 <span className="grid size-[47px] place-items-center rounded-card border border-line bg-cream text-[22px] [filter:saturate(.7)]">
                   {actor.symbol}
                 </span>
@@ -699,7 +662,7 @@ export function IncidentParty() {
               <h3 className="mt-[25px] mb-1.5 text-[23px] tracking-[-.035em]">
                 {actor.name}
               </h3>
-              <strong className="font-display text-[15px] font-medium text-[#616761] italic">
+              <strong className="font-display text-body font-medium text-body-tertiary italic">
                 {actor.role}
               </strong>
               <p className="mt-[19px] text-[14px] leading-copy text-muted">
